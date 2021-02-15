@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50506
 File Encoding         : 65001
 
-Date: 2021-02-15 20:19:40
+Date: 2021-02-15 20:44:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -63,6 +63,7 @@ CREATE TABLE `questionnaire_tb` (
   `instruction` varchar(255) DEFAULT NULL,
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
+  `issued` int(11) NOT NULL,
   `img` varchar(255) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
