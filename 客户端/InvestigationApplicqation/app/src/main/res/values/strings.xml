@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">InvestigationApplicqation</string>
+    <string name="welcome">感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！</string>
+    <string name="cancel">取消</string>
+    <string name="title">请选择时间</string>
+    <string name="confirm">确定</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="hour">时</string>
+    <string name="minute">分</string>
+
+    <string name="select_date">选择日期</string>
+    <string name="current_date">当前日期</string>
+    <string name="select_time">选择时间</string>
+    <string name="current_time">当前时间</string>
+    <string name="ipConfig">192.168.0.105</string>
+</resources>
