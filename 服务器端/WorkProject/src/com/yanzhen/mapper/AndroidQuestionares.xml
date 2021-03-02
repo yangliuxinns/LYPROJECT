@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzhen.mapper.AndroidQuestionaresDao">
+	<resultMap type="com.yanzhen.entityylx.Questionnaire" id="questionnairerMap">
+		    <id property="id" column="id"/>
+		    <result property="title" column="title"/>
+		    <result property="instructions" column="instruction"/>
+		    <result property="startTime" column="start_time"/>
+		    <result property="IsRelease" column="IsRelease"/>
+		    <result property="appearance" column="img"/>
+		    <result property="user_id" column="user_id"/>
+		    <result property="onlyPhone" column="onlyPhone"/>
+		    <result property="onlyWeixin" column="onlyWeixin"/>
+		    <result property="isRecordWeixinInfo" column="isRecordWeixinInfo"/>
+		    <result property="totalPage" column="totalPage"/>
+		    <result property="isDel" column="isDel"/>
+		    <collection property="list" ofType="com.yanzhen.entityylx.Question" column="uid=id"
+		    		select="com.yanzhen.mapper.AndroidQuestionMapper.findQuestionById">
+            </collection>
+	</resultMap>
+		
+	<!--增加问卷  -->
+	<insert id="insertQuestionare" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Questionnaire">
+    	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel) 
+    	values(#{title},#{instructions},#{startTime},#{endTime},#{IsRelease},#{appearance},#{user_id},#{onlyPhone},#{onlyWeixin},#{isRecordWeixinInfo},#{totalPage},#{isDel}) 
+	</insert> 
+	
+	<!--题库加入题目  -->
+	<insert id="insertQuestion" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Question">
+    	insert into question_warehouse_tb(question_title,question_types) 
+    	values(#{title},#{type}) 
+	</insert> 
+	
+	<!--选择题增加选项  -->
+	<insert id="insertOptions">
+    	insert into question_options_tb(order_index,content,qw_id,imgver) values(#{order1},#{content1},#{qId1},#{img1}) 
+	</insert> 
+	<!--题目加入关联表  -->
+	<insert id="insertAssociation">
+    	insert into questionnaire_questuion_tb(questionnaire_id,question_id,Is_required,order_index) 
+    	values(#{qsid},#{qid},#{Is_required},#{order1}) 
+	</insert> 
+
+	<!-- 根据id搜索问卷 -->
+	<select id="findQuestionareById" resultMap="questionnairerMap">
+		select * from questionnaire_tb where id = #{qsid}
+	</select>
+	
+	<!-- 根据id搜索问卷草稿箱子 -->
+	<select id="findQuestionareByUserId" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{uid} and issued = false and isDel = false;
+	</select>
+	<!-- 根据id搜索问卷发布箱子 -->
+	<select id="findQuestionareByUserIdPublish" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{uid} and issued = true and isDel = false;
+	</select>
+	<select id="findQuestionaresByUserIdAndTitle" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{id} and title like "%"#{title}"%"
+	</select>
+	<!--删除关联关系  -->
+	<delete id="deleteRelationById">
+    		delete from questionnaire_questuion_tb where questionnaire_id = #{qsId}
+	</delete>
+	<!--更新问卷  -->
+	<update id="updateQuestionareById">
+	    update questionnaire_tb 
+	    set title= #{title},
+	   		 instruction= #{instructions},
+	   		 start_time= #{startTime},
+	   		 end_time= #{endTime},
+	   		 issued= #{IsRelease},
+	   		 img= #{appearance},
+	   		 user_id = #{user_id},
+	   		 onlyPhone = #{onlyPhone},
+	   		 onlyWeixin = #{onlyWeixin},
+	   		 isRecordWeixinInfo = #{isRecordWeixinInfo},
+	   		 totalPage = #{totalPage},
+	   		 isDel = #{isDel}
+	    where id = #{id}
+	</update>
+	<!--更新问卷 删除 -->
+	<update id="updateQuestionareDelete">
+	    update questionnaire_tb 
+	    set isDel = #{isDel}
+	    where id = #{id}
+	</update>
+	
+</mapper>
