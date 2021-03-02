@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50506
 File Encoding         : 65001
 
-Date: 2021-02-15 20:44:34
+Date: 2021-03-02 16:33:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,39 +41,61 @@ CREATE TABLE `questionnaire_questuion_tb` (
   `questionnaire_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
   `Is_required` int(11) NOT NULL,
-  `order` int(11) DEFAULT NULL,
+  `order_index` int(11) DEFAULT NULL,
+  `pageNumber` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `qn_id` (`questionnaire_id`),
-  KEY `q_id` (`question_id`),
-  CONSTRAINT `q_id` FOREIGN KEY (`question_id`) REFERENCES `question_warehouse_tb` (`id`),
-  CONSTRAINT `qn_id` FOREIGN KEY (`questionnaire_id`) REFERENCES `questionnaire_tb` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `q_id` (`question_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of questionnaire_questuion_tb
 -- ----------------------------
+INSERT INTO `questionnaire_questuion_tb` VALUES ('4', '10', '11', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('5', '10', '12', '1', '2', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('6', '10', '13', '0', '3', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('11', '13', '18', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('12', '13', '19', '0', '2', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('13', '14', '20', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('14', '14', '21', '0', '2', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('15', '15', '22', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('16', '15', '23', '0', '2', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('19', '11', '26', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('20', '11', '27', '0', '2', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('21', '12', '28', '1', '1', null);
+INSERT INTO `questionnaire_questuion_tb` VALUES ('22', '12', '29', '0', '2', null);
 
 -- ----------------------------
 -- Table structure for `questionnaire_tb`
 -- ----------------------------
 DROP TABLE IF EXISTS `questionnaire_tb`;
 CREATE TABLE `questionnaire_tb` (
-  `id` int(11) NOT NULL DEFAULT '0',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `instruction` varchar(255) DEFAULT NULL,
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
-  `issued` int(11) NOT NULL,
+  `issued` tinyint(4) NOT NULL,
   `img` varchar(255) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
+  `onlyPhone` tinyint(4) DEFAULT NULL,
+  `onlyWeixin` tinyint(4) DEFAULT NULL,
+  `isRecordWeixinInfo` tinyint(4) DEFAULT NULL,
+  `totalPage` int(11) DEFAULT NULL,
+  `isDel` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user_tb` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of questionnaire_tb
 -- ----------------------------
+INSERT INTO `questionnaire_tb` VALUES ('10', '我是问卷一', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', null, null, '1', null, '1', '0', '0', '0', null, '0');
+INSERT INTO `questionnaire_tb` VALUES ('11', '哈哈龙膜腾讯', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', '1998-10-17 18:00:00', '1998-10-17 18:02:00', '0', null, '1', '0', '0', '0', '0', '0');
+INSERT INTO `questionnaire_tb` VALUES ('12', '我是删除', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', null, null, '0', null, '1', '0', '0', '0', '0', '1');
+INSERT INTO `questionnaire_tb` VALUES ('13', '哈哈', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', null, null, '0', null, '1', '0', '0', '0', '0', '0');
+INSERT INTO `questionnaire_tb` VALUES ('14', '哈哈', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', null, null, '0', null, '1', '0', '0', '0', '0', '0');
+INSERT INTO `questionnaire_tb` VALUES ('15', '哈哈', '感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！', null, null, '0', null, '1', '0', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `question_options_tb`
@@ -81,17 +103,52 @@ CREATE TABLE `questionnaire_tb` (
 DROP TABLE IF EXISTS `question_options_tb`;
 CREATE TABLE `question_options_tb` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order` int(11) NOT NULL,
+  `order_index` int(11) NOT NULL,
   `content` varchar(255) DEFAULT NULL,
   `qw_id` int(11) NOT NULL,
+  `imgver` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `qw_id` (`qw_id`),
-  CONSTRAINT `qw_id` FOREIGN KEY (`qw_id`) REFERENCES `question_warehouse_tb` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `qw_id` (`qw_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of question_options_tb
 -- ----------------------------
+INSERT INTO `question_options_tb` VALUES ('10', '1', '选项a', '11', '');
+INSERT INTO `question_options_tb` VALUES ('11', '2', '选项b', '11', '');
+INSERT INTO `question_options_tb` VALUES ('12', '3', '其他', '11', 'sr');
+INSERT INTO `question_options_tb` VALUES ('13', '1', '选项1', '14', '');
+INSERT INTO `question_options_tb` VALUES ('14', '2', '选项2', '14', '');
+INSERT INTO `question_options_tb` VALUES ('15', '3', '选项3', '14', '');
+INSERT INTO `question_options_tb` VALUES ('16', '4', '其他', '14', 'sr');
+INSERT INTO `question_options_tb` VALUES ('17', '1', '选项1', '16', '');
+INSERT INTO `question_options_tb` VALUES ('18', '2', '选项2', '16', '');
+INSERT INTO `question_options_tb` VALUES ('19', '3', '选项3', '16', '');
+INSERT INTO `question_options_tb` VALUES ('20', '4', '其他', '16', 'sr');
+INSERT INTO `question_options_tb` VALUES ('21', '1', '选项1', '18', '');
+INSERT INTO `question_options_tb` VALUES ('22', '2', '选项2', '18', '');
+INSERT INTO `question_options_tb` VALUES ('23', '3', '选项3', '18', '');
+INSERT INTO `question_options_tb` VALUES ('24', '4', '其他', '18', 'sr');
+INSERT INTO `question_options_tb` VALUES ('25', '1', '选项1', '20', '');
+INSERT INTO `question_options_tb` VALUES ('26', '2', '选项2', '20', '');
+INSERT INTO `question_options_tb` VALUES ('27', '3', '选项3', '20', '');
+INSERT INTO `question_options_tb` VALUES ('28', '4', '其他', '20', 'sr');
+INSERT INTO `question_options_tb` VALUES ('29', '1', '选项1', '22', '');
+INSERT INTO `question_options_tb` VALUES ('30', '2', '选项2', '22', '');
+INSERT INTO `question_options_tb` VALUES ('31', '3', '选项3', '22', '');
+INSERT INTO `question_options_tb` VALUES ('32', '4', '其他', '22', 'sr');
+INSERT INTO `question_options_tb` VALUES ('33', '1', '选项1', '24', '');
+INSERT INTO `question_options_tb` VALUES ('34', '2', '选项2', '24', '');
+INSERT INTO `question_options_tb` VALUES ('35', '3', '选项3', '24', '');
+INSERT INTO `question_options_tb` VALUES ('36', '4', '其他', '24', 'sr');
+INSERT INTO `question_options_tb` VALUES ('37', '1', '选项1', '26', '');
+INSERT INTO `question_options_tb` VALUES ('38', '2', '选项2', '26', '');
+INSERT INTO `question_options_tb` VALUES ('39', '3', '选项3', '26', '');
+INSERT INTO `question_options_tb` VALUES ('40', '4', '其他', '26', 'sr');
+INSERT INTO `question_options_tb` VALUES ('41', '1', '选项1', '28', '');
+INSERT INTO `question_options_tb` VALUES ('42', '2', '选项2', '28', '');
+INSERT INTO `question_options_tb` VALUES ('43', '3', '选项3', '28', '');
+INSERT INTO `question_options_tb` VALUES ('44', '4', '其他', '28', 'sr');
 
 -- ----------------------------
 -- Table structure for `question_warehouse_tb`
@@ -101,13 +158,31 @@ CREATE TABLE `question_warehouse_tb` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `question_title` varchar(255) DEFAULT NULL,
   `question_types` varchar(50) DEFAULT NULL,
-  `form` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of question_warehouse_tb
 -- ----------------------------
+INSERT INTO `question_warehouse_tb` VALUES ('11', '单选题', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('12', '我是填空题', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('13', '您的姓名：', '姓名');
+INSERT INTO `question_warehouse_tb` VALUES ('14', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('15', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('16', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('17', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('18', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('19', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('20', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('21', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('22', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('23', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('24', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('25', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('26', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('27', '我是新的填空', '填空题');
+INSERT INTO `question_warehouse_tb` VALUES ('28', '我是单选题2', '单选题');
+INSERT INTO `question_warehouse_tb` VALUES ('29', '我是新的填空', '填空题');
 
 -- ----------------------------
 -- Table structure for `results_questionnaire_tb`
@@ -121,8 +196,7 @@ CREATE TABLE `results_questionnaire_tb` (
   `answer` varchar(255) NOT NULL,
   `questionnatre_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `questionnaire_id` (`questionnatre_id`),
-  CONSTRAINT `questionnaire_id` FOREIGN KEY (`questionnatre_id`) REFERENCES `questionnaire_tb` (`id`)
+  KEY `questionnaire_id` (`questionnatre_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -355,7 +429,7 @@ CREATE TABLE `tb_survey` (
 -- ----------------------------
 INSERT INTO `tb_survey` VALUES ('2', '哈哈哈哈', '哈哈哈哈哈', '0', '2020-12-07 00:00:00', '2020-12-31 00:00:00', '0', '', 'http://localhost:8080/survey/dy/038814b8-418d-4a0c-beb2-f89076e6858b', '结束', null, 'f7edde2dab3543408ac448121e499e94_u=2985666500,2827796561&fm=11&gp=0.jpg', '0', '2073', '2020-12-08 15:54:00');
 INSERT INTO `tb_survey` VALUES ('3', '啊啊啊', '', '0', '2020-12-11 16:43:31', '2020-12-17 00:00:00', '0', '', null, '结束', null, null, '0', '2073', '2020-12-11 16:43:41');
-INSERT INTO `tb_survey` VALUES ('5', '111', '111111111111', '0', '2021-02-15 09:59:27', '2021-02-25 00:00:00', '0', '', null, '执行中', null, '9d879f09a0e14846bd6a929ba058c8a0_b4.png', '0', '2073', '2021-02-15 09:59:37');
+INSERT INTO `tb_survey` VALUES ('5', '111', '111111111111', '0', '2021-02-15 09:59:27', '2021-02-25 00:00:00', '0', '', null, '结束', null, '9d879f09a0e14846bd6a929ba058c8a0_b4.png', '0', '2073', '2021-02-15 09:59:37');
 
 -- ----------------------------
 -- Table structure for `user_tb`
