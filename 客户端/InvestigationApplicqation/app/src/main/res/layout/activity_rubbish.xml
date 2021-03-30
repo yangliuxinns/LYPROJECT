@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+    <!--头部-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/back2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/back"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="回收站"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:padding="8dp"
+            android:text="编辑"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/lay_bottom">
+        <!--无数据时的布局-->
+        <LinearLayout
+            android:id="@+id/rv_normal_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="264dp"
+                android:layout_height="140dp"
+                android:background="@mipmap/icon_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:text="空空如也"
+                android:textColor="@color/colorTextGray"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!--下拉重新添加数据-->
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!--展示数据的列表-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:visibility="gone" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    </RelativeLayout>
+
+    <!--底部-->
+    <LinearLayout
+        android:id="@+id/lay_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorMain"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_check_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/bg_white"
+            android:gravity="center"
+            android:text="全选"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/colorWhite" />
+
+        <TextView
+            android:id="@+id/tv_revert_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/bg_white"
+            android:gravity="center"
+            android:text="恢复"
+            android:textColor="@color/colorMist"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/colorWhite" />
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/bg_white"
+            android:gravity="center"
+            android:text="删除"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>

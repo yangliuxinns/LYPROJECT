@@ -300,7 +300,10 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intent,3);
                 break;
             case R.id.menu:
-
+                //发布问卷
+                Intent inten = new Intent(this, ReleaseActivity.class);
+                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/10");
+                startActivity(inten);
                 break;
             case R.id.addpt:
                 showPopFormBottom(view);
@@ -314,17 +317,22 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 intent2.putExtra("q_data", questionnaire);
                 startActivityForResult(intent2,5);
                 break;
-            case R.id.ae://点击保存
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadToDataBase(questionnaire);
-                    }
-                }).start();
-                Intent intent1 = new Intent(this,MainActivity.class);
-                intent1.setAction("work");
-                startActivity(intent1);
-                finish();
+            case R.id.ae://点击外观
+                Intent intent4 = new Intent(this, AppearanceSettingsActivity.class);
+                intent4.putExtra("q_data", questionnaire);
+                startActivityForResult(intent4,6);
+//                new Thread(new Runn
+//                able() {
+////                    @Override
+////                    public void run() {
+////                        uploadToDataBase(questionnaire);
+////                    }
+////                }).start();
+////                Intent intent1 = new Intent(this,MainActivity.class);
+////                intent1.setAction("work");
+////                startActivity(intent1);
+////                finish();
+
                 break;
             case R.id.preview://点击预览
                 Intent intent3 = new Intent(this, PreViewActivity.class);

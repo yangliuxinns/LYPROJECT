@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorMain">
+        <ImageView
+            android:id="@+id/search_back"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/back" />
+        <LinearLayout
+            android:id="@+id/search_block"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/search_shape"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/searchylx"/>
+            <org.turings.investigationapplicqation.Util.EditText_Clear
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="264"
+                android:background="@null"
+                android:drawableLeft="@mipmap/searchylx"
+                android:drawablePadding="8dp"
+                android:gravity="start|center_vertical"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <org.turings.investigationapplicqation.Util.SearchListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </org.turings.investigationapplicqation.Util.SearchListView>
+            <TextView
+                android:id="@+id/tv_clear"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/grey2"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:textColor="@android:color/black"
+                android:text="清除搜索历史" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,11 +1,29 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
 
+MobSDK {
+    appKey "327a6c80f76ae"     //修改为你自己的appKey
+    appSecret "833db4d1aa8f4aa50cc5edf763078db3"    //修改为你自己的appSecret
+    SMSSDK {}
+}
 android {
+    signingConfigs {
+        debug {
+            storePassword '18249250436yhq'
+            keyPassword '18249250436yhq'
+            keyAlias = 'key0'
+            storeFile file('F:\\project\\InvestigationApplicqation\\jdktool2.jks -deststoretype pkcs12')
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     compileSdkVersion 29
     defaultConfig {
         applicationId "org.turings.investigationapplicqation"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -15,6 +33,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 }
 
@@ -35,5 +57,22 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'com.github.abel533:ECharts:3.0.0.2'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    //表格开源框架
+    implementation 'com.github.huangyanbin:SmartTable:1.7.1'
+    //圆形剪切
+    implementation 'com.linchaolong.android:imagepicker:1.5'
+    //绑定视图
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    //RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    //下拉刷新
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+    //RecyclerView适配器
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.22'
+    //热门强大的图片加载器
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
 }

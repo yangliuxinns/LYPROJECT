@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    tools:context=".StatisticalResultsActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorMain">
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/back"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:text="统计结果"
+            android:layout_marginRight="45dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+    <!-- 指示器 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp">
+
+        <LinearLayout
+            android:id="@+id/layout_notice1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="统计结果"
+                android:textColor="@color/colorMain"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_find1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="详细数据"
+                android:textColor="#555555"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/cursor"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/colorMain"
+            android:contentDescription="@null" />
+    </LinearLayout>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1.0"
+        android:background="#EEE"
+        android:flipInterval="30"
+        android:persistentDrawingCache="animation" />
+</LinearLayout>

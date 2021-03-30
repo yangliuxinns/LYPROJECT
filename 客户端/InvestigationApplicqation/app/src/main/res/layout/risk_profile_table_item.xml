@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/table_shape_shape"
+    android:layout_margin="5dp">
+    <TextView
+        android:id="@+id/option"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:text="一个"
+        android:textSize="13sp"
+        android:background="@drawable/table_shape_shape"/>
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:text="2个"
+        android:background="@drawable/table_shape_shape"
+        android:textSize="13sp"/>
+    <TextView
+        android:id="@+id/proportion"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:background="@drawable/table_shape_shape"
+        android:layout_gravity="center"
+        android:text="3个"
+        android:textSize="13sp"/>
+</LinearLayout>

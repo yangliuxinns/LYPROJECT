@@ -11,7 +11,6 @@
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:paddingTop="10dp"
         android:background="@color/colorMain">
         <ImageView
             android:id="@+id/back"

@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorMain">#6AD530</color>
+    <color name="colorShen">#6AD540</color>
     <color name="colorWhite">#FFF</color>
     <color name="grey">	#A9A9A9</color>
     <color name="whitesmoke">#F5F5F5</color>
@@ -21,4 +22,8 @@
     <color name="current_time_bg">#FFFFFF</color>
     <color name="current_time_text">#666666</color>
     <color name="selected_time_text">#57C5E8</color>
+    <color name="colorE9">#E9EDEE</color>
+    <color name="colorDefault">#ffffff</color>
+    <color name="colorBackground">#f1f0f6</color>
+    <color name="colorText">#9b9b9b</color>
 </resources>

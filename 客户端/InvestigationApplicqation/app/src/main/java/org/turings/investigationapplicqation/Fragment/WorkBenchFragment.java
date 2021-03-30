@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.turings.investigationapplicqation.CreateBlankQuestionnaire;
 import org.turings.investigationapplicqation.R;
+import org.turings.investigationapplicqation.SearchActivity;
 
 import java.util.ArrayList;
 
@@ -181,6 +182,8 @@ public class WorkBenchFragment extends Fragment implements View.OnClickListener 
                 viewPager.setCurrentItem(1);
                 break;
             case R.id.search_layout://跳转搜索页面
+                Intent intent1 = new Intent(getContext(), SearchActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.iv_addProject://添加项目
                 Intent intent = new Intent(getContext(),CreateBlankQuestionnaire.class);

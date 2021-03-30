@@ -21,6 +21,7 @@ public class Questionnaire implements Serializable {
 
     private Boolean isDel;//是否删除
     private int user_id;//用户id
+    private boolean select = false;
     public Questionnaire() {
     }
 
@@ -197,5 +198,13 @@ public class Questionnaire implements Serializable {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
     }
 }
