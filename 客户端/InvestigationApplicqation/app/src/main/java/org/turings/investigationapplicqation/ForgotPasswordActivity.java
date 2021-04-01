@@ -64,75 +64,20 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     Handler handler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void handleMessage(Message msg) {
-            if (msg.what == -9) {
-//                getMNum.setText("重新发送(" + i + ")");
-            } else if (msg.what == -8) {
-//                getMNum.setText("获取验证码");
-//                getMNum.setClickable(true);
-//                getMNum.setBackground(getDrawable(R.drawable.shape_btn1));
-//                getMNum.setTextColor(getColor(R.color.colorMain));
-                i = 30;
-            } else if(msg.what == 1){
+            if(msg.what == 1){
                 //注册
-                if(msg.obj.equals("注册成功")){
-//                    tvLogin.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
-//                    tvLogin.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));//字体加粗
-//                    ivLogin.setVisibility(View.VISIBLE);
-//                    tvRegister.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-//                    ivRegister.setVisibility(View.INVISIBLE);
-//                    tvRegister.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-//                    ly_login.setVisibility(View.VISIBLE);
-//                    ly_register.setVisibility(View.GONE);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        ly_phone_login.setElevation(10.0f);
-//                        ly_psd_login.setElevation(0);
-//                    }
-                    Toast.makeText(getApplicationContext(), "注册成功，现在登录吧",
-                            Toast.LENGTH_SHORT).show();
+                if(msg.obj.equals("修改成功")){
+                    mobUtil1.unregister();
+                    Intent intent = new Intent(getApplicationContext(),FixYesActivity.class);
+                    startActivity(intent);
+                    finish();
 
-                }else if(msg.obj.equals("注册失败，请重试")){
+                }else if(msg.obj.equals("修改失败，请重试")){
                     Toast.makeText(getApplicationContext(), "失败请重试",
                             Toast.LENGTH_SHORT).show();
                 }else {
-                    Toast.makeText(getApplicationContext(), "号码注册过",
+                    Toast.makeText(getApplicationContext(), "不存在该账号",
                             Toast.LENGTH_SHORT).show();
-                }
-            } else if(msg.what == 2){
-                if(msg.obj.equals("用户名或密码不匹配")){
-                    Toast.makeText(getApplicationContext(), "用户名密码不匹配",
-                            Toast.LENGTH_SHORT).show();
-                }else {
-                    //进入主activity
-//                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
-//                    User user = gson.fromJson(msg.obj.toString(),new TypeToken<User>(){}.getType());
-//                    SharedPreferences sharedPreferences=getSharedPreferences("userInfo",MODE_PRIVATE);
-//                    SharedPreferences.Editor editor=sharedPreferences.edit();
-//                    editor.putString("phone",user.getPhone());
-//                    editor.putString("uId",Integer.toBinaryString(user.getId()));
-//                    editor.commit();
-//                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//                    intent.setAction("work");
-//                    startActivity(intent);
-                }
-            } else {
-                int event = msg.arg1;
-                int result = msg.arg2;
-                Object data = msg.obj;
-                Log.e("event", "event=" + event);
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 短信注册成功后，返回MainActivity,然后提示
-                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-                        Toast.makeText(getApplicationContext(), "提交验证码成功",
-                                Toast.LENGTH_SHORT).show();
-                        //进行注册
-                    } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                        Toast.makeText(getApplicationContext(), "正在获取验证码",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "验证码错误",
-                                Toast.LENGTH_SHORT).show();
-                        ((Throwable) data).printStackTrace();
-                    }
                 }
             }
         }
@@ -221,22 +166,21 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                     return;
                 } // 2. 通过sdk发送短信验证
                 if (debug)
-                    Log.d("MobActivity", "onClick: 发送验证码");
+                    Log.i("www", "onClick:hhh ");
+                mobUtil1.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.i("www", "onSuccess: 验证码");
+                        Toast.makeText(getApplicationContext(),"成功请求验证码",Toast.LENGTH_SHORT).show();
+                        //写自己逻辑
+                    }
 
-//                mobUtil1.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
-//                    @Override
-//                    public void onSuccess() {
-//                        Log.i("www", "onSuccess: 验证码");
-//                        Toast.makeText(getApplicationContext(),"成功请求验证码",Toast.LENGTH_SHORT).show();
-//                        //写自己逻辑
-//                    }
-//
-//                    @Override
-//                    public void onfail() {
-//                        Toast.makeText(getApplicationContext(),"失败请求验证码",Toast.LENGTH_SHORT).show();
-//                        //写自己逻辑
-//                    }
-//                });
+                    @Override
+                    public void onfail() {
+                        Toast.makeText(getApplicationContext(),"失败请求验证码",Toast.LENGTH_SHORT).show();
+                        //写自己逻辑
+                    }
+                });
                 break;
             case R.id.btn_register://数据库修改密码
                 mobUtil1.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
@@ -249,13 +193,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                             if(edPsd.getText().toString().trim().equals(edPsds.getText().toString().trim())){
                                 //去查询修改，返回结果
                                 //去注册
-                                Toast.makeText(getApplicationContext(),"去注册",Toast.LENGTH_SHORT).show();
-//                                new Thread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        uploadToDataBase();
-//                                    }
-//                                }).start();
+                                Toast.makeText(getApplicationContext(),"去修改",Toast.LENGTH_SHORT).show();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadToDataBase();
+                                    }
+                                }).start();
                             }else {
                                 Toast.makeText(getApplicationContext(),"密码不一致",Toast.LENGTH_SHORT).show();
                             }
@@ -319,7 +263,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
     }
-    //访问服务器上传至数据库，搜索
+    //去修改
     private void uploadToDataBase() {
         okHttpClient = new OkHttpClient();
         FormBody formBody = new FormBody.Builder()

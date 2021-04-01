@@ -1,6 +1,8 @@
 package org.turings.investigationapplicqation.Fragment;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import com.linchaolong.android.imagepicker.cropper.CropImageView;
 import org.turings.investigationapplicqation.CircleImageView;
 import org.turings.investigationapplicqation.Entity.User;
 import org.turings.investigationapplicqation.FixPAndMActivity;
+import org.turings.investigationapplicqation.LoginAndRegisterActivity;
 import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.RubbishActivity;
@@ -25,6 +28,9 @@ import java.io.Serializable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import static android.content.Context.MODE_PRIVATE;
+
 //个人中心
 public class MySelfFragment extends Fragment implements View.OnClickListener {
 
@@ -69,6 +75,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
         circleImageView.setOnClickListener(this);
         info.setOnClickListener(this);
         ly_rubbish.setOnClickListener(this);
+        ly_canel.setOnClickListener(this);
     }
 
     private void getViews() {
@@ -141,9 +148,8 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                 getActivity().finish();
                 break;
             case R.id.ly_project://我的项目
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
-                intent.setAction("work");
-                startActivity(intent);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.setTab(0);
                 break;
             case R.id.imgView:
                 //调用裁剪
@@ -152,6 +158,15 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
             case R.id.ly_rubbish:
                 Intent intent2 = new Intent(view.getContext(), RubbishActivity.class);
                 startActivity(intent2);
+                break;
+            case R.id.ly_canel:
+                SharedPreferences sharedPreferences= getActivity().getSharedPreferences("userInfo",MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent3 = new Intent(view.getContext(), LoginAndRegisterActivity.class);
+                startActivity(intent3);
+                getActivity().finish();
                 break;
         }
     }

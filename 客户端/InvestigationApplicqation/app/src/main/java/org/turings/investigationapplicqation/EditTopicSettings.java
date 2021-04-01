@@ -50,7 +50,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+//编辑题目
 public class EditTopicSettings extends AppCompatActivity implements View.OnClickListener {
 
     //录像需要的权限

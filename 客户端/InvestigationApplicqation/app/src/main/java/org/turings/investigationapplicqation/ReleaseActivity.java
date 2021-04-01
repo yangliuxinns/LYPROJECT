@@ -5,11 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +33,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -32,16 +45,26 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.Util.ImageUtil;
 import org.turings.investigationapplicqation.Util.QRCodeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
+//发布问卷
 public class ReleaseActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private OkHttpClient okHttpClient;
     private Button btn_generate;
-    private EditText et_content;
+//    private EditText et_content;
     private ImageView iv_qrcode;
     private ImageView picture_logo, picture_black;//logo，代替黑色色块的图片
 
@@ -60,18 +83,37 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
     private Bitmap blackBitmap;//代替黑色色块的图片
     private int remark;//标记返回的是logo还是代替黑色色块图片
 
+    private Button btn;//复制链接
     private Bitmap qrcode_bitmap;//生成的二维码
+    private String url;
+    private String uId;
+    Handler handler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        public void handleMessage(Message msg) {
+            if(msg.what == 1){
+                if(msg.obj.equals("发布失败")){
+                    iv_qrcode.setVisibility(View.INVISIBLE);
+                    btn.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(),"发布失败，请重试",Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_release);
         //获得网址
-        String url = getIntent().getStringExtra("url");
-        et_content = findViewById(R.id.et_content);
+        url = getIntent().getStringExtra("url");
+        uId = getIntent().getStringExtra("uId");
+//        et_content = findViewById(R.id.et_content);
         iv_qrcode = findViewById(R.id.iv_qrcode);
+        btn = findViewById(R.id.lianjie);
+        btn.setOnClickListener(this);
         ba = findViewById(R.id.back);
         ba.setOnClickListener(this);
-        et_content.setText(url);
+//        et_content.setText(url);
         iv_qrcode.setOnClickListener(this);
         iv_qrcode.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -83,6 +125,13 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             generateQrcodeAndDisplay();
         }
+        //改变问卷的属性为发布
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                uploadToDataBase();
+            }
+        }).start();
     }
     /**
      * 保存图片至本地
@@ -117,7 +166,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void generateQrcodeAndDisplay() {
-        content = et_content.getText().toString();
+        content = url;
         String str_width = Integer.toString(650);
         String str_height = Integer.toString(650);
         if (str_width.length() <= 0 || str_height.length() <= 0) {
@@ -132,10 +181,10 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "你没有输入二维码内容哟！", Toast.LENGTH_SHORT).show();
             return;
         }
-        Drawable drawable = getResources().getDrawable(R.mipmap.city);
+        Drawable drawable = getResources().getDrawable(R.mipmap.logoylx);
         BitmapDrawable bd = (BitmapDrawable) drawable;
         qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
-                getResources().getStringArray(R.array.spinarr_error_correction)[0],getResources().getStringArray(R.array.spinarr_margin)[0],getColor(R.color.colorMain),Color.WHITE,bd.getBitmap(), 0.2F, blackBitmap);
+                getResources().getStringArray(R.array.spinarr_error_correction)[0],getResources().getStringArray(R.array.spinarr_margin)[0],Color.BLACK,Color.WHITE,bd.getBitmap(), 0.2F, blackBitmap);
         iv_qrcode.setImageBitmap(qrcode_bitmap);
     }
 
@@ -390,6 +439,43 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.back:
                 finish();
                 break;
+            case R.id.lianjie://复制链接
+                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                // 将文本内容放到系统剪贴板里。
+                cm.setText(url);
+                Toast.makeText(getApplicationContext(),"链接复制成功",Toast.LENGTH_SHORT).show();
+                break;
         }
+    }
+    //改变问卷状态
+    private void uploadToDataBase() {
+        okHttpClient = new OkHttpClient();
+        FormBody formBody = new FormBody.Builder()
+                .add("uId", uId)
+                .build();
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/fixQuestionaresRelease";
+        final Request request = new Request.Builder().post(formBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String str = response.body().string();
+                        Message msg = Message.obtain();
+                        msg.obj = str;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }).start();
     }
 }

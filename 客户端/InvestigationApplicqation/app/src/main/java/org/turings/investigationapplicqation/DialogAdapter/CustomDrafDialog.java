@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.DisplayMetrics;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,32 +11,31 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.turings.investigationapplicqation.EditQuestionnaire;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
-import org.turings.investigationapplicqation.Fragment.DraftsFragment;
 import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
-
 
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-//上传题目
-public class CustomDialogYLX extends DialogFragment {
+
+public class CustomDrafDialog extends DialogFragment {
     private OkHttpClient okHttpClient;
     private Response response;//响应
     private Questionnaire questionnaire;//问卷
@@ -45,18 +43,15 @@ public class CustomDialogYLX extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.custom_dialog_commit_layout_ylx, container, false);//布局，父视图，是否立刻加载
+        View view = inflater.inflate(R.layout.custom_dialog_draf_layout_ylx, container, false);//布局，父视图，是否立刻加载
         Button btnOk = view.findViewById(R.id.btn_ok);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //点击确定按钮执行的操作
-                //关闭activity对象
-                //将信息存入数据库，并跳转到添加错题页
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        uploadToDataBase(questionnaire);
+                        uploadToDataBase();
                     }
                 }).start();
             }
@@ -67,11 +62,6 @@ public class CustomDialogYLX extends DialogFragment {
             public void onClick(View v) {
                 //点击取消按钮执行的操作
                 getDialog().dismiss();//关闭当前的对话框
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), MainActivity.class);
-                intent.setAction("work");
-                startActivity(intent);
-                getActivity().finish();
             }
         });
         return view;
@@ -103,15 +93,14 @@ public class CustomDialogYLX extends DialogFragment {
         questionnaire = subjectMsg;
     }
 
-    //访问服务器上传至数据库保存
-    private void uploadToDataBase(Questionnaire subjectMsg) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
-        String subject = gson.toJson(subjectMsg);
+    //改变问卷状态
+    private void uploadToDataBase() {
         okHttpClient = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), subject);
-        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/saveQuestionares";
-//
-        Request request = new Request.Builder().post(requestBody).url(url).build();
+        FormBody formBody = new FormBody.Builder()
+                .add("uId", String.valueOf(questionnaire.getId()))
+                .build();
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/fixQuestionaresDraf";
+        final Request request = new Request.Builder().post(formBody).url(url).build();
         final Call call = okHttpClient.newCall(request);
         new Thread(new Runnable() {
             @Override
@@ -126,15 +115,17 @@ public class CustomDialogYLX extends DialogFragment {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String str = response.body().string();
-                        int id = Integer.parseInt(str);
-                        if (0 != id) {//跳转
-                            //点击取消按钮执行的操作
+                        if(str.equals("更改成功")){
+                            //去往
+                            questionnaire.setRelease(false);
                             getDialog().dismiss();//关闭当前的对话框
-                            Intent intent = new Intent();
-                            intent.setClass(getActivity(), MainActivity.class);
-                            intent.setAction("work");
+                            Intent intent = new Intent(getActivity(), EditQuestionnaire.class);
+                            intent.putExtra("questionnaire_data", questionnaire);
                             startActivity(intent);
-                            getActivity().finish();
+                        }else {
+                            //失败提示
+                            getDialog().dismiss();//关闭当前的对话框
+                            Toast.makeText(getContext(),"操作失败，请重试",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

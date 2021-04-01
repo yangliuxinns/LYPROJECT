@@ -13,9 +13,10 @@ import android.widget.TextView;
 import org.turings.investigationapplicqation.EditQuestionnaire;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.R;
+import org.turings.investigationapplicqation.ReleaseActivity;
 
 import java.util.List;
-
+//草稿箱子问卷Adapter
 public class CustomDraftsAdapter extends BaseAdapter {
     private List<Questionnaire> list;//数据源
     private Context context;//上下文环境
@@ -72,16 +73,19 @@ public class CustomDraftsAdapter extends BaseAdapter {
         }
         holder.title.setText(list.get(listPosition).getTitle());
         holder.instruction.setText(list.get(listPosition).getInstructions());
-//        holder.lyEd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+        holder.pub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //发布问卷
+                Intent inten = new Intent(context, ReleaseActivity.class);
+                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+list.get(listPosition).getId());
+                inten.putExtra("uId",list.get(listPosition).getId()+"");
+                context.startActivity(inten);
+            }
+        });
         holder.lyEd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("www", "onClick:点击编辑事件 ");
                 Intent intent = new Intent(context, EditQuestionnaire.class);
                 intent.putExtra("questionnaire_data", list.get(listPosition));
                 context.startActivity(intent);

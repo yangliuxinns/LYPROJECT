@@ -1,6 +1,7 @@
 package org.turings.investigationapplicqation;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
@@ -16,7 +17,11 @@ import okhttp3.Response;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -34,12 +39,14 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import org.turings.investigationapplicqation.DialogAdapter.CustomDialogYLX;
 import org.turings.investigationapplicqation.DialogAdapter.CustomQuestionnaireAdapter;
 import org.turings.investigationapplicqation.Entity.Options;
 import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
+import org.turings.investigationapplicqation.Entity.User;
 import org.turings.investigationapplicqation.Util.AddProjectPopupWindow;
 import org.turings.investigationapplicqation.Util.CustomListView;
 import org.turings.investigationapplicqation.Util.ListViewUtil;
@@ -74,6 +81,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
     private CustomQuestionnaireAdapter customQuestionnaireAdapter;
     private AddProjectPopupWindow addProjectPopupWindow;
     private int total =0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -300,9 +308,17 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intent,3);
                 break;
             case R.id.menu:
+                //先保存
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadToDataBase(questionnaire);
+                    }
+                }).start();
                 //发布问卷
                 Intent inten = new Intent(this, ReleaseActivity.class);
-                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/10");
+                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+questionnaire.getId());
+                inten.putExtra("uId",questionnaire.getId()+"");
                 startActivity(inten);
                 break;
             case R.id.addpt:
@@ -321,20 +337,15 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 Intent intent4 = new Intent(this, AppearanceSettingsActivity.class);
                 intent4.putExtra("q_data", questionnaire);
                 startActivityForResult(intent4,6);
-//                new Thread(new Runn
-//                able() {
-////                    @Override
-////                    public void run() {
-////                        uploadToDataBase(questionnaire);
-////                    }
-////                }).start();
-////                Intent intent1 = new Intent(this,MainActivity.class);
-////                intent1.setAction("work");
-////                startActivity(intent1);
-////                finish();
-
                 break;
             case R.id.preview://点击预览
+                //先保存
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadToDataBase(questionnaire);
+                    }
+                }).start();
                 Intent intent3 = new Intent(this, PreViewActivity.class);
                 intent3.putExtra("q_data", questionnaire);
                 startActivity(intent3);
@@ -342,9 +353,8 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
         }
     }
 
-    //访问服务器上传至数据库
+    //访问服务器上传至数据库保存
     private void uploadToDataBase(Questionnaire subjectMsg) {
-        Log.i("www", "uploadToDataBase: id是多少"+subjectMsg.getId());
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
         String subject = gson.toJson(subjectMsg);
         okHttpClient = new OkHttpClient();
@@ -365,7 +375,8 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        Log.i("lww", response.body().string());
+                        String str = response.body().string();
+                        questionnaire.setId(Integer.parseInt(str));
                     }
                 });
             }
@@ -383,7 +394,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
             transaction.add(customDialog,"dialog");
         }
         //传入要上传的数据
-//        customDialog.subjectMsgData(subjectMsg);
+        customDialog.setMsgData(questionnaire);
         //显示Fragment
         transaction.show(customDialog);
         //提交，只有提交了上面的操作才会生效
@@ -457,6 +468,9 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 list.setAdapter(customQuestionnaireAdapter);
                 break;
             case 5:
+                questionnaire = (Questionnaire) data.getSerializableExtra("q_data");
+                break;
+            case 6://外观
                 questionnaire = (Questionnaire) data.getSerializableExtra("q_data");
                 break;
         }

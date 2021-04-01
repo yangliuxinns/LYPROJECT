@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +20,8 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.turings.investigationapplicqation.DialogAdapter.CustomDialogYLX;
+import org.turings.investigationapplicqation.DialogAdapter.CustomDrafDialog;
 import org.turings.investigationapplicqation.DialogAdapter.CustomDraftsAdapter;
 import org.turings.investigationapplicqation.DialogAdapter.CustomPublishAdapter;
 import org.turings.investigationapplicqation.DialogAdapter.CustomQuestionnaireAdapter;
@@ -33,6 +36,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -41,7 +46,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+//发布的问卷
 public class PublishedFragment extends Fragment {
     private ListView listView;
     private CustomPublishAdapter customPublishAdapter;
@@ -148,6 +153,14 @@ public class PublishedFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //点击编辑
+                //提示是否停止收集，进入编辑
+                showCustomDialog(list.get(position));
+            }
+        });
         customPublishAdapter.setmOnItemDeleteClickListener(new CustomQuestionnaireAdapter.onItemDeleteListener() {
             @Override
             public void onDeleteClick(final int position) {
@@ -218,6 +231,24 @@ public class PublishedFragment extends Fragment {
                 });
             }
         }).start();
+    }
+    private void showCustomDialog(Questionnaire questionnaire) {
+        //管理多个Fragment
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //事务（一系列原子性操作）
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        CustomDrafDialog customDialog = new CustomDrafDialog();
+        //是否添加过
+        if(!customDialog.isAdded()){
+            //没添加过添加
+            transaction.add(customDialog,"dialog");
+        }
+        //传入要上传的数据
+        customDialog.setMsgData(questionnaire);
+        //显示Fragment
+        transaction.show(customDialog);
+        //提交，只有提交了上面的操作才会生效
+        transaction.commit();
     }
     //删除
     private void deleteToDataBase(Questionnaire questionnaire) {

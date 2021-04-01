@@ -43,7 +43,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-
+//草稿箱
 public class DraftsFragment extends Fragment {
     private ListView listView;
     private CustomDraftsAdapter customDraftsAdapter;
@@ -55,7 +55,7 @@ public class DraftsFragment extends Fragment {
     private ImageView nullYlx;//如果没有题目显示
     private LinearLayout lyYlx;//空空如也外框
     private Response response;//响应
-    private String uId = Integer.toString(1);
+    private String uId;
     // 可用于传值
     public static DraftsFragment newInstance(String title) {
         Bundle bundle = new Bundle();
@@ -101,8 +101,8 @@ public class DraftsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.drafts_layout, container, false);
         //获取用户的id
-//        SharedPreferences sp = getContext().getSharedPreferences("userInfo",MODE_PRIVATE);
-//        uId = sp.getString("uId",null);
+        SharedPreferences sp = getContext().getSharedPreferences("userInfo",MODE_PRIVATE);
+        uId = sp.getString("uId",null);
         getViews();
         init();
         return view;

@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
+//登录注册
 public class LoginAndRegisterActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener{
 
     public static void actionStart(Context context){
@@ -98,15 +98,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
     Handler handler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void handleMessage(Message msg) {
-            if (msg.what == -9) {
-                getMNum.setText("重新发送(" + i + ")");
-            } else if (msg.what == -8) {
-                getMNum.setText("获取验证码");
-                getMNum.setClickable(true);
-                getMNum.setBackground(getDrawable(R.drawable.shape_btn1));
-                getMNum.setTextColor(getColor(R.color.colorMain));
-                i = 30;
-            } else if(msg.what == 1){
+            if(msg.what == 1){
                 //注册
                 if(msg.obj.equals("注册成功")){
                     tvLogin.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
@@ -153,26 +145,6 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                     startActivity(intent);
                     mobUtil.unregister();
                 }
-            } else {
-                int event = msg.arg1;
-                int result = msg.arg2;
-                Object data = msg.obj;
-                Log.e("event", "event=" + event);
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 短信注册成功后，返回MainActivity,然后提示
-                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-                        Toast.makeText(getApplicationContext(), "提交验证码成功",
-                                Toast.LENGTH_SHORT).show();
-                        //进行注册
-                    } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                        Toast.makeText(getApplicationContext(), "正在获取验证码",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "验证码错误",
-                                Toast.LENGTH_SHORT).show();
-                        ((Throwable) data).printStackTrace();
-                    }
-                }
             }
         }
     };
@@ -181,23 +153,8 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_and_register_layout);
-//        MobSDK.submitPolicyGrantResult(true, null);
-//        submitPrivacyGrantResult(true);
-//        MobSDK.init(LoginAndRegisterActivity.this, "327a6c80f76ae","833db4d1aa8f4aa50cc5edf763078db3");
         getViews();
         init();
-//        eventHandler = new EventHandler(){
-//            @Override
-//            public void afterEvent(int event, int result, Object data) {
-//                Message msg = new Message();
-//                msg.arg1 = event;
-//                msg.arg2 = result;
-//                msg.obj = data;
-//                handler.sendMessage(msg);
-//            }
-//        };
-        //注册回调监听接口
-//        SMSSDK.registerEventHandler(eventHandler);
         initdata();
     }
     //初始化
@@ -231,9 +188,6 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
         edPsd = findViewById(R.id.et_psd_login);
         forgetPsd = findViewById(R.id.ly_forget_psd);
         btnLogin = findViewById(R.id.btn_login);
-//        QQlogin = findViewById(R.id.QQ_login);
-//        weixinLogin = findViewById(R.id.weixin_login);
-//        codeLogin = findViewById(R.id.ly_code_login);
         ly_register = findViewById(R.id.ly_register);
         ePhone = findViewById(R.id.ed_phone);//手机号
         yanzhengma = findViewById(R.id.yanzhengma);//验证码
@@ -297,10 +251,10 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
         }
         String phoneNums = ePhone.getText().toString().trim();
         switch (view.getId()){
-            case R.id.ly_login_item:
+            case R.id.ly_login_item://切换登录页面
                 init();
                 break;
-            case R.id.ly_register_item:
+            case R.id.ly_register_item://切换注册页面
                 registerInit();
                 break;
             case R.id.get_m://点击获取验证码
@@ -364,7 +318,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                 startActivity(intent);
                 finish();
                 break;
-            case R.id.btn_duan:
+            case R.id.btn_duan://短信登录
                 mobUtil.unregister();
                 Intent intent1 = new Intent(getApplicationContext(),SMSLoginActivity.class);
                 startActivity(intent1);
@@ -494,7 +448,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
         SMSSDK.unregisterEventHandler(eventHandler);
     }
 
-    //访问服务器上传至数据库，搜索
+    //注册
     private void uploadToDataBase() {
         okHttpClient = new OkHttpClient();
         FormBody formBody = new FormBody.Builder()
@@ -527,7 +481,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
             }
         }).start();
     }
-    //访问服务器上传至数据库，搜索
+    //登录
     private void loginToDataBase() {
         okHttpClient = new OkHttpClient();
         FormBody formBody = new FormBody.Builder()

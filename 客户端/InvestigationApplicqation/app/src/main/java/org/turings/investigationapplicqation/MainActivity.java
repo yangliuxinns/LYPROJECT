@@ -19,7 +19,7 @@ import org.turings.investigationapplicqation.Fragment.WorkBenchFragment;
 
 import java.util.HashMap;
 import java.util.Map;
-
+//主界面
 public class MainActivity extends AppCompatActivity {
 
     private Map<String, ImageView> imageViewMap = new HashMap<>();
@@ -66,32 +66,32 @@ public class MainActivity extends AppCompatActivity {
         if(intent != null){
             switch (intent.getAction()){
                 case "work"://返回工作台
-                    fragmentTabHost.setCurrentTab(1);
+                    fragmentTabHost.setCurrentTab(0);
                     imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
                     textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
                     break;
                 case "self":
-                    fragmentTabHost.setCurrentTab(2);
+                    fragmentTabHost.setCurrentTab(1);
                     imageViewMap.get("tag2").setImageResource(R.mipmap.taga2);
                     textViewMap.get("tag2").setTextColor(getResources().getColor(android.R.color.darker_gray));
                     break;
             }
         }else{
             //设置默认选中哪一项
-            fragmentTabHost.setCurrentTab(0);
-            imageViewMap.get("tag1").setImageResource(R.mipmap.tagb1);
-            textViewMap.get("tag1").setTextColor(getResources().getColor(R.color.colorMain));
+            fragmentTabHost.setCurrentTab(1);
+            imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
+            textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
         }
     }
     //初始化
     private void init() {
         //判断是否登录
-//        if(!checkUserIsLogin()){//未登录
-//            Intent intent = new Intent(getApplicationContext(),LoginAndRegisterActivity.class);
-//            intent.setAction("work");
-//            startActivity(intent);
-//            finish();
-//        }
+        if(!checkUserIsLogin()){//未登录
+            Intent intent = new Intent(getApplicationContext(),LoginAndRegisterActivity.class);
+            intent.setAction("work");
+            startActivity(intent);
+            finish();
+        }
         //获取FragmentTabHost对象
         fragmentTabHost = findViewById(android.R.id.tabhost);
         fragmentTabHost.setup(this,
@@ -139,5 +139,10 @@ public class MainActivity extends AppCompatActivity {
         imageViewMap.put(tag,imageView);
         textViewMap.put(tag,textView);
         return view;
+    }
+    public void setTab(int tab){
+        fragmentTabHost.setCurrentTab(0);
+        imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
+        textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
     }
 }

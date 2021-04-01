@@ -29,7 +29,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppNoTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SearchResultActivity"></activity>
+        <activity android:name=".FixYesActivity"></activity>
+        <activity android:name=".SearchResultActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".FixPhoneActivity" />
         <activity android:name=".FixNameActivity" />

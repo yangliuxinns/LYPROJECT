@@ -76,7 +76,8 @@ public class CustomAddQuestionAdapter extends BaseAdapter {
         holder.grid_option.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(list.get(listPosition).getList().get(i).getTextName().equals("题库")){
+                if(list.get(listPosition).getList().get(i).getTextName().equals("题库选题")){
+                    //选择题库
 
                 }else {
                     Intent intent = new Intent(context, EditTopicSettings.class);

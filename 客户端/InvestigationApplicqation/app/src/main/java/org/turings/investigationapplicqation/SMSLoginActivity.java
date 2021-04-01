@@ -15,6 +15,7 @@ import okhttp3.Response;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,10 +29,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.turings.investigationapplicqation.Entity.User;
 import org.turings.investigationapplicqation.Util.MobUtil;
 
 import java.io.IOException;
 
+/**
+ * 短信登录
+ */
 public class SMSLoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ImageView back;//返回
@@ -48,75 +57,25 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
     Handler handler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void handleMessage(Message msg) {
-            if (msg.what == -9) {
-//                getMNum.setText("重新发送(" + i + ")");
-            } else if (msg.what == -8) {
-//                getMNum.setText("获取验证码");
-//                getMNum.setClickable(true);
-//                getMNum.setBackground(getDrawable(R.drawable.shape_btn1));
-//                getMNum.setTextColor(getColor(R.color.colorMain));
-                i = 30;
-            } else if(msg.what == 1){
-                //注册
-                if(msg.obj.equals("注册成功")){
-//                    tvLogin.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
-//                    tvLogin.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));//字体加粗
-//                    ivLogin.setVisibility(View.VISIBLE);
-//                    tvRegister.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-//                    ivRegister.setVisibility(View.INVISIBLE);
-//                    tvRegister.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-//                    ly_login.setVisibility(View.VISIBLE);
-//                    ly_register.setVisibility(View.GONE);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        ly_phone_login.setElevation(10.0f);
-//                        ly_psd_login.setElevation(0);
-//                    }
-                    Toast.makeText(getApplicationContext(), "注册成功，现在登录吧",
+            if(msg.what == 1){
+                //登录
+                if(msg.obj.equals("不存在用户")){
+                    Toast.makeText(getApplicationContext(), "不存在用户，请先注册",
                             Toast.LENGTH_SHORT).show();
-
-                }else if(msg.obj.equals("注册失败，请重试")){
-                    Toast.makeText(getApplicationContext(), "失败请重试",
-                            Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getApplicationContext(), "号码注册过",
-                            Toast.LENGTH_SHORT).show();
-                }
-            } else if(msg.what == 2){
-                if(msg.obj.equals("用户名或密码不匹配")){
-                    Toast.makeText(getApplicationContext(), "用户名密码不匹配",
-                            Toast.LENGTH_SHORT).show();
+                    mobUtil1.unregister();
                 }else {
                     //进入主activity
-//                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
-//                    User user = gson.fromJson(msg.obj.toString(),new TypeToken<User>(){}.getType());
-//                    SharedPreferences sharedPreferences=getSharedPreferences("userInfo",MODE_PRIVATE);
-//                    SharedPreferences.Editor editor=sharedPreferences.edit();
-//                    editor.putString("phone",user.getPhone());
-//                    editor.putString("uId",Integer.toBinaryString(user.getId()));
-//                    editor.commit();
-//                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//                    intent.setAction("work");
-//                    startActivity(intent);
-                }
-            } else {
-                int event = msg.arg1;
-                int result = msg.arg2;
-                Object data = msg.obj;
-                Log.e("event", "event=" + event);
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 短信注册成功后，返回MainActivity,然后提示
-                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-                        Toast.makeText(getApplicationContext(), "提交验证码成功",
-                                Toast.LENGTH_SHORT).show();
-                        //进行注册
-                    } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                        Toast.makeText(getApplicationContext(), "正在获取验证码",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "验证码错误",
-                                Toast.LENGTH_SHORT).show();
-                        ((Throwable) data).printStackTrace();
-                    }
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+                    User user = gson.fromJson(msg.obj.toString(),new TypeToken<User>(){}.getType());
+                    SharedPreferences sharedPreferences=getSharedPreferences("userInfo",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString("phone",user.getPhone());
+                    editor.putString("uId",Integer.toBinaryString(user.getId()));
+                    editor.commit();
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    intent.setAction("work");
+                    startActivity(intent);
+                    mobUtil1.unregister();
                 }
             }
         }
@@ -203,34 +162,32 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
                 } // 2. 通过sdk发送短信验证
                 if (debug)
                     Log.d("MobActivity", "onClick: 发送验证码");
+                mobUtil1.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.i("www", "onSuccess: 验证码");
+                        Toast.makeText(getApplicationContext(),"成功请求验证码",Toast.LENGTH_SHORT).show();
+                        //写自己逻辑
+                    }
 
-//                mobUtil1.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
-//                    @Override
-//                    public void onSuccess() {
-//                        Log.i("www", "onSuccess: 验证码");
-//                        Toast.makeText(getApplicationContext(),"成功请求验证码",Toast.LENGTH_SHORT).show();
-//                        //写自己逻辑
-//                    }
-//
-//                    @Override
-//                    public void onfail() {
-//                        Toast.makeText(getApplicationContext(),"失败请求验证码",Toast.LENGTH_SHORT).show();
-//                        //写自己逻辑
-//                    }
-//                });
+                    @Override
+                    public void onfail() {
+                        Toast.makeText(getApplicationContext(),"失败请求验证码",Toast.LENGTH_SHORT).show();
+                        //写自己逻辑
+                    }
+                });
                 break;
-            case R.id.btn_register://数据库修改密码
+            case R.id.btn_register://数据库搜索该账号
                 mobUtil1.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
                     @Override
                     public void onSuccess() {
                         //去数据库比对号码，是否存在账号
-                        Toast.makeText(getApplicationContext(),"去登录",Toast.LENGTH_SHORT).show();
-//                                new Thread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        uploadToDataBase();
-//                                    }
-//                                }).start();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadToDataBase();
+                                    }
+                                }).start();
 
                     }
 
@@ -291,14 +248,14 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
     }
-    //访问服务器上传至数据库，搜索
+    //搜索账号
     private void uploadToDataBase() {
         okHttpClient = new OkHttpClient();
         FormBody formBody = new FormBody.Builder()
                 .add("phone", edPhone.getText().toString())
                 .build();
         Log.i("www", "uploadToDataBase: "+ edPhone.getText().toString());
-        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/fixPsd";
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/findPhone";
         final Request request = new Request.Builder().post(formBody).url(url).build();
         final Call call = okHttpClient.newCall(request);
         new Thread(new Runnable() {

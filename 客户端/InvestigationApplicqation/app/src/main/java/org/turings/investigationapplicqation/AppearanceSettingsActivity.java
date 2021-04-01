@@ -2,7 +2,9 @@ package org.turings.investigationapplicqation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import org.turings.investigationapplicqation.DialogAdapter.CustomGridAdapter;
 import org.turings.investigationapplicqation.DialogAdapter.PicGridAdapter;
 import org.turings.investigationapplicqation.Entity.Photo;
+import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.Util.CustomGridView;
 
 import java.util.ArrayList;
@@ -25,10 +28,15 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
     private List<Photo> ps = new ArrayList<>();
     private TextView cancel;//取消
     private TextView ok;//使用
+    private String postion;//选中了第几个
+    private Questionnaire questionnaire;//问卷
+    private Questionnaire questionnaire2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appearance_settings);
+        questionnaire = (Questionnaire) getIntent().getSerializableExtra("q_data");
+        questionnaire2 = (Questionnaire) getIntent().getSerializableExtra("q_data");
         Photo photo = new Photo("第一张","abg1",1);
         Photo photo1 = new Photo("第2张","abg2",-1);
         Photo photo2 = new Photo("第3张","abg3",-1);
@@ -61,6 +69,7 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
                         l.get(i).setPos(-1);
                     }
                 }
+                postion = position+"";
                 ps.clear();
                 ps.addAll(l);
                 picGridAdapter.notifyDataSetChanged();
@@ -70,6 +79,8 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
             @Override
             public void onNumClick(int position) {
                 Toast.makeText(getApplicationContext(),"选中了第"+position,Toast.LENGTH_SHORT).show();
+                postion = position+"";
+
                 //调用预览
             }
         });
@@ -78,7 +89,7 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
 
     private void getViews() {
         customGridView = findViewById(R.id.grid_option);
-        cancel = findViewById(R.id.canel);
+        cancel = findViewById(R.id.cancel1);
         ok = findViewById(R.id.btn_ok);
         cancel.setOnClickListener(this);
         ok.setOnClickListener(this);
@@ -87,10 +98,26 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.cancel://不设定返回
+            case R.id.cancel1://不设定返回
+                Intent intent1 = new Intent();
+                //把返回数据存入Intent
+                intent1.putExtra("q_data",questionnaire2);
+                //设置返回数据
+                setResult(6, intent1);//RESULT_OK为自定义常量
+                //关闭Activity
+                finish();
                 break;
             case R.id.btn_ok:
+                questionnaire.setAppearance(postion);
+                Log.i("rrr", "onClick: 外观"+questionnaire.getAppearance());
                 //直接设定返回
+                Intent intent = new Intent();
+                //把返回数据存入Intent
+                intent.putExtra("q_data",questionnaire);
+                //设置返回数据
+                setResult(6, intent);//RESULT_OK为自定义常量
+                //关闭Activity
+                finish();
                 break;
         }
     }
