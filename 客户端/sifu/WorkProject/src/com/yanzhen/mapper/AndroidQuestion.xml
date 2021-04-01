@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzhen.mapper.AndroidQuestionMapper">
+		<resultMap type="com.yanzhen.entityylx.Question" id="questionMap">
+				<id column="question_id" property="id"/>
+                <result property="order" column="order_index"/>
+                <result property="title" column="question_title"/>
+                <result property="type" column="question_types"/>
+                <result property="isRequired" column="Is_required"/>
+                <result property="pageNumber" column="pageNumber"/>
+                <collection property="options" ofType="com.yanzhen.entityylx.Options" column="uid=t1.question_id"
+		    				select="com.yanzhen.mapper.AndroidOptionsDao.findOptionsById">
+            	</collection>
+		</resultMap>
+		
+		<select id="findQuestionById" resultMap="questionMap">
+			SELECT t1.id,t1.questionnaire_id,t1.question_id,t1.Is_required,t1.order_index,t1.pageNumber,t2.question_title,t2.question_types
+			from questionnaire_questuion_tb t1,question_warehouse_tb t2 
+			where t1.questionnaire_id=#{uid} and t1.question_id = t2.id
+			order by t1.order_index ASC
+		</select>
+</mapper>
