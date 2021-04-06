@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.turings.investigationapplicqation.EditQuestionnaire;
 import org.turings.investigationapplicqation.EditTopicSettings;
 import org.turings.investigationapplicqation.Entity.TopicBigType;
+import org.turings.investigationapplicqation.QuestionBankActivity;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.Util.CustomGridView;
 
@@ -78,7 +79,8 @@ public class CustomAddQuestionAdapter extends BaseAdapter {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(list.get(listPosition).getList().get(i).getTextName().equals("题库选题")){
                     //选择题库
-
+                    Intent intent = new Intent(context, QuestionBankActivity.class);
+                    ((EditQuestionnaire)context).startActivityForResult(intent,7);
                 }else {
                     Intent intent = new Intent(context, EditTopicSettings.class);
                     intent.putExtra("type",list.get(listPosition).getList().get(i).getTextName());

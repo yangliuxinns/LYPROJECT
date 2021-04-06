@@ -11,10 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.turings.investigationapplicqation.EditQuestionnaire;
+import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.ReleaseActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 //草稿箱子问卷Adapter
 public class CustomDraftsAdapter extends BaseAdapter {
@@ -87,6 +89,16 @@ public class CustomDraftsAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, EditQuestionnaire.class);
+                List<Question> qs = new ArrayList<>();
+                for(Question qu:list.get(listPosition).getList()){
+                    for(int i=0;i<qu.getOptions().size();i++){
+                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                            qu.getOptions().get(i).setImgcontent(null);
+                        }
+                    }
+                    qs.add(qu);
+                }
+                list.get(listPosition).setList(qs);
                 intent.putExtra("questionnaire_data", list.get(listPosition));
                 context.startActivity(intent);
             }

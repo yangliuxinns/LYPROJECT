@@ -5,10 +5,11 @@
 				<id column="id" property="id"/>
                 <result property="content" column="content"/>
                 <result property="img" column="imgver"/>
+                <result property="imgcontent" column="img"/>
 		</resultMap>
 		
 		<select id="findOptionsById" resultMap="questionMap">
-			SELECT id,content,imgver
+			SELECT id,content,imgver,img
 			from question_options_tb t1
 			where t1.qw_id=#{uid}
 			order by t1.order_index ASC

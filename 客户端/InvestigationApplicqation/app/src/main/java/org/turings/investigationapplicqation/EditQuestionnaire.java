@@ -18,6 +18,8 @@ import okhttp3.Response;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +44,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.turings.investigationapplicqation.DialogAdapter.CustomDialogYLX;
+import org.turings.investigationapplicqation.DialogAdapter.CustomPublishDialog;
 import org.turings.investigationapplicqation.DialogAdapter.CustomQuestionnaireAdapter;
 import org.turings.investigationapplicqation.Entity.Options;
 import org.turings.investigationapplicqation.Entity.Question;
@@ -51,6 +54,8 @@ import org.turings.investigationapplicqation.Util.AddProjectPopupWindow;
 import org.turings.investigationapplicqation.Util.CustomListView;
 import org.turings.investigationapplicqation.Util.ListViewUtil;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -88,8 +93,8 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_edit_questionnaire);
         getViews();
         init();
-        Options options1 = new Options(1, "选项1sijdaojasosdoooooooooooooooooooooooooooooooooooooasassddddddddd", "");
-        Options options2 = new Options(1, "选项2", "");
+        Options options1 = new Options(1, "选项1sijdaojasosdoooooooooooooooooooooooooooooooooooooasassddddddddd", "",null);
+        Options options2 = new Options(1, "选项2", "",null);
         final List<Options> lo = new ArrayList<>();
         lo.add(options1);
         lo.add(options2);
@@ -271,7 +276,6 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
         tvTitle.setText(questionnaire.getTitle());
         tvContent.setText(questionnaire.getInstructions());
         if(questionnaire.getId() != 0){
-            Log.i("www", "init: 获得id"+questionnaire.getId());
             lq.addAll(questionnaire.getList());
         }else {
             questionnaire.setList(lq);
@@ -308,18 +312,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intent,3);
                 break;
             case R.id.menu:
-                //先保存
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadToDataBase(questionnaire);
-                    }
-                }).start();
-                //发布问卷
-                Intent inten = new Intent(this, ReleaseActivity.class);
-                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+questionnaire.getId());
-                inten.putExtra("uId",questionnaire.getId()+"");
-                startActivity(inten);
+                showPublishCustomDialog(questionnaire);
                 break;
             case R.id.addpt:
                 showPopFormBottom(view);
@@ -400,6 +393,25 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
         //提交，只有提交了上面的操作才会生效
         transaction.commit();
     }
+    //发布问卷
+    private void showPublishCustomDialog(Questionnaire questionnaire) {
+        //管理多个Fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        //事务（一系列原子性操作）
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        CustomPublishDialog customDialog = new CustomPublishDialog();
+        //是否添加过
+        if(!customDialog.isAdded()){
+            //没添加过添加
+            transaction.add(customDialog,"dialog");
+        }
+        //传入要上传的数据
+        customDialog.setMsgData(questionnaire);
+        //显示Fragment
+        transaction.show(customDialog);
+        //提交，只有提交了上面的操作才会生效
+        transaction.commit();
+    }
     //弹出添加题目
     public void showPopFormBottom(View view) {
         addProjectPopupWindow = new AddProjectPopupWindow(this, this);
@@ -462,8 +474,16 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 break;
             case 4:
                 Question qu = (Question) data.getSerializableExtra("result_question");
+                for(int i=0;i<qu.getOptions().size();i++){
+                    if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                        String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                        Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                        qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                    }
+                }
                 int position = data.getIntExtra("postion",0);
                 lq.set(position,qu);
+                questionnaire.setList(lq);
                 customQuestionnaireAdapter.notifyDataSetChanged();
                 list.setAdapter(customQuestionnaireAdapter);
                 break;
@@ -473,6 +493,45 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
             case 6://外观
                 questionnaire = (Questionnaire) data.getSerializableExtra("q_data");
                 break;
+            case 7://批量添加题目
+                List<Question> qs = (List<Question>) data.getSerializableExtra("qs");
+                for(Question question1 : qs){
+                    Log.i("bb", "onActivityResult:批量添加 "+question1.toString());
+                    order++;
+                    question1.setPageNumber(total);
+                    question1.setOrder(order);
+                    lq.add(question1);
+                    questionnaire.setList(lq);
+                    customQuestionnaireAdapter.notifyDataSetChanged();
+                    list.setAdapter(customQuestionnaireAdapter);
+                }
+                break;
         }
+    }
+    public byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 压缩图片
+     * 该方法引用自：http://blog.csdn.net/demonliuhui/article/details/52949203
+     *
+     * @param image
+     * @return
+     */
+    public  Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
     }
 }

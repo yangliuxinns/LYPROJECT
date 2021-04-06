@@ -33,7 +33,7 @@
 	
 	<!--选择题增加选项  -->
 	<insert id="insertOptions">
-    	insert into question_options_tb(order_index,content,qw_id,imgver) values(#{order1},#{content1},#{qId1},#{img1}) 
+    	insert into question_options_tb(order_index,content,qw_id,imgver,img) values(#{order1},#{content1},#{qId1},#{img1},#{imgcontent}) 
 	</insert> 
 	<!--题目加入关联表  -->
 	<insert id="insertAssociation">
@@ -53,6 +53,10 @@
 	<!-- 根据id搜索问卷发布箱子 -->
 	<select id="findQuestionareByUserIdPublish" resultMap="questionnairerMap">
 		select * from questionnaire_tb where user_id = #{uid} and issued = true and isDel = false;
+	</select>
+	<!-- 根据id和条件搜索问卷 -->
+	<select id="findQsByTitle" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{id} and title like concat('%',#{title},'%');
 	</select>
 	<select id="findQuestionaresByUserIdAndTitle" resultMap="questionnairerMap">
 		select * from questionnaire_tb where user_id = #{id} and title like "%"#{title}"%"
@@ -125,4 +129,34 @@
 	    set issued = false
 	    where id = #{id}
 	</update>
+	<!-- 根据id搜索问卷回收站 -->
+	<select id="findQuestionaresByUserIdDelete" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{uid} and isDel = true;
+	</select>
+	<!--批量恢复  -->
+	<delete id="revertQuestionaire">
+		update questionnaire_tb 
+	    set issued = false,isDel = false
+	    where id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--彻底删除问卷  -->
+	<delete id="deleteQuestionaire">
+		delete from questionnaire_tb where id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--彻底删除问卷关联表  -->
+	<delete id="deleteQuestionaireAndQuestion">
+		delete from questionnaire_questuion_tb where questionnaire_id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
 </mapper>

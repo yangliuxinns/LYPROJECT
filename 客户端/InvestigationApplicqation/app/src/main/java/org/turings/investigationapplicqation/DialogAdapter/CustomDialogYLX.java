@@ -1,6 +1,8 @@
 package org.turings.investigationapplicqation.DialogAdapter;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.DisplayMetrics;
@@ -16,12 +18,16 @@ import android.widget.Button;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.turings.investigationapplicqation.Entity.Options;
+import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.Fragment.DraftsFragment;
 import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
@@ -53,6 +59,15 @@ public class CustomDialogYLX extends DialogFragment {
                 //点击确定按钮执行的操作
                 //关闭activity对象
                 //将信息存入数据库，并跳转到添加错题页
+                for(Question qu:questionnaire.getList()){
+                    for(int i=0;i<qu.getOptions().size();i++){
+                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                            String dataFileStr = getActivity().getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                            Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                            qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                        }
+                    }
+                }
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -140,5 +155,31 @@ public class CustomDialogYLX extends DialogFragment {
                 });
             }
         }).start();
+    }
+    public byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 压缩图片
+     * 该方法引用自：http://blog.csdn.net/demonliuhui/article/details/52949203
+     *
+     * @param image
+     * @return
+     */
+    public  Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
     }
 }

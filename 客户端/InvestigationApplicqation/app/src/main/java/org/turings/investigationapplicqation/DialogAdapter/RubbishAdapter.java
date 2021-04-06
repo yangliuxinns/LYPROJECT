@@ -13,7 +13,7 @@ import org.turings.investigationapplicqation.R;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-
+//回收站的Adapter
 public class RubbishAdapter extends BaseQuickAdapter<Questionnaire, BaseViewHolder> {
 
     private static final int STATE_DEFAULT = 0;//默认状态
@@ -25,10 +25,7 @@ public class RubbishAdapter extends BaseQuickAdapter<Questionnaire, BaseViewHold
 
     @Override
     protected void convert(BaseViewHolder helper, Questionnaire item) {
-//        //Glide加载网络图片
-//        ImageView imageView = helper.getView(R.id.iv_img);
-//        Glide.with(mContext).load(item.getUrl()).into(imageView);
-        //TextView赋值
+
         helper.setText(R.id.tv_video_info, item.getTitle());
 
         helper.addOnClickListener(R.id.item_data);//添加item点击事件

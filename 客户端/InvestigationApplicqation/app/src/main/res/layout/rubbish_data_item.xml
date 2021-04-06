@@ -31,14 +31,5 @@
             android:text="测试数据"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="12dp"
-            android:text="测试数据"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
     </LinearLayout>
 </LinearLayout>

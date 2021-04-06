@@ -14,6 +14,7 @@ public class Question implements Serializable {
     private Boolean isRequired;//是否必填
     private int PageNumber;//分页
 
+    private boolean select = false;
     public Question() {
     }
 
@@ -94,5 +95,13 @@ public class Question implements Serializable {
                 ", isRequired=" + isRequired +
                 ", PageNumber=" + PageNumber +
                 '}';
+    }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
     }
 }

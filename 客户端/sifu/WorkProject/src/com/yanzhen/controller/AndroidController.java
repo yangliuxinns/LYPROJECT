@@ -1,9 +1,16 @@
 package com.yanzhen.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +44,9 @@ import com.yanzhen.entityylx.ResultInfo;
 import com.yanzhen.entityylx.User;
 import com.yanzhen.service.AdminService;
 import com.yanzhen.service.AndroidService;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 @Controller
 @RequestMapping("/ylx")
@@ -187,13 +198,20 @@ public class AndroidController {
 				return "更改失败".toString();
 			}
 		}
-	//根据uid搜索每个人的草稿问卷
-	//根据uid搜索每个人的发布问卷
 	//根据id搜索发布的问卷
 	@RequestMapping(value = "/findQuestionaresByUserIdPublish",produces="text/json;charset=utf-8")
 	@ResponseBody
 	public String findQuestionaresByUserIdPublish(@RequestParam(value = "uId") int id) {
 		List<Questionnaire> questionnaire = androidService.findQuestionnaireByUserIdPublish(id);
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String subjectMsgList = gson.toJson(questionnaire);
+		return subjectMsgList;
+	}
+	//根据id搜索删除的问卷
+	@RequestMapping(value = "/findQuestionaresByUserIdDelete",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findQuestionaresByUserIdDelete(@RequestParam(value = "uId") int id) {
+		List<Questionnaire> questionnaire = androidService.findQuestionaresByUserIdDelete(id);
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
@@ -207,12 +225,86 @@ public class AndroidController {
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
 	}
+	//预览问卷之前
+	@GetMapping("/prepreview/{id}")
+	public String prePreViewQuestionares(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
+		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		if(questionnaire.getAppearance().isEmpty()) {
+			for(Question qu:questionnaire.getList()){
+	            for(int i=0;i<qu.getOptions().size();i++){
+	                if(qu.getOptions().get(i).getImgcontent() != null){
+	                    OutputStream os;
+						try {
+							os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+							 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+			                 os.flush();
+			                 os.close(); 
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	                }
+	            }
+	        }
+			modelMap.addAttribute("questionnaire",questionnaire);
+			return "androidPreView";
+		}else {
+			//只传递id
+			modelMap.addAttribute("questionnaire",questionnaire);
+			return "openFile";
+		}
+	}
 	//预览问卷
 	@GetMapping("/preview/{id}")
-	public String preViewQuestionares(@PathVariable("id") Integer id,ModelMap modelMap) {
-		Questionnaire questionnaire = androidService.findQuestionnaireById(10);
+	public String preViewQuestionares(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
+		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		for(Question qu:questionnaire.getList()){
+            for(int i=0;i<qu.getOptions().size();i++){
+                if(qu.getOptions().get(i).getImgcontent() != null){
+                    OutputStream os;
+					try {
+						os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+						 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+		                 os.flush();
+		                 os.close(); 
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                }
+            }
+        }
 		modelMap.addAttribute("questionnaire",questionnaire);
 		return "androidPreView";
+	}
+	//获取图片
+	@RequestMapping(value = "/seekExperts",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String createFolw(@RequestParam(value = "id") int id,@RequestParam(value = "pId") int pid,
+			HttpServletResponse response) {
+		System.out.println("进来啦恶魔"+id+pid);
+		 response.setContentType("image/*");
+		FileInputStream fis = null;
+		OutputStream os = null;
+		try {
+			fis = new FileInputStream("F://proImg/"+id+pid+".jpeg");
+			os = response.getOutputStream();
+			int count = 0;
+			byte[] buffer = new byte[1024 * 8];
+			while ((count = fis.read(buffer)) != -1) {
+				os.write(buffer, 0, count);
+				os.flush();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			fis.close();
+			os.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "ok";
 	}
 	//注册（先搜索是否注册过，没有注册）
 	@RequestMapping(value = "/register",produces="text/json;charset=utf-8")
@@ -262,5 +354,65 @@ public class AndroidController {
 			return "不存在用户".toString();
 		}
 	}
-
+	/**
+	 * 恢复功能
+	 * 根据问卷id，更改问卷属性到草稿箱
+	 */
+	@RequestMapping(value = "/revertQuestionaire",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String revertQuestionaire(@RequestParam(value = "ids") String ids) {
+		Gson gson = new Gson();
+	    List<Integer> obj = gson.fromJson(ids,new TypeToken<List<Integer>>(){}.getType());
+	    int n = androidService.revertQuestionaire(obj);
+	    if(n>0) {
+			return "恢复成功";
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 删除功能
+	 * 彻底删除问卷
+	 */
+	@RequestMapping(value = "/deleteQuestionaire",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String deleteQuestionaire(@RequestParam(value = "ids") String ids) {
+		Gson gson = new Gson();
+	    List<Integer> obj = gson.fromJson(ids,new TypeToken<List<Integer>>(){}.getType());
+	    int n = androidService.deleteQuestionaire(obj);
+	    if(n>0) {
+			return "删除成功";
+		}else {
+			return null;
+		}
+	}
+	//搜索所有题目
+	@RequestMapping(value = "/findQuestionBank",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findQuestionBank(@RequestParam(value = "uId") int id) {
+		List<Question> list = androidService.findQuestionBank();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String subjectMsgList = gson.toJson(list);
+		return subjectMsgList;
+	}
+	//条件搜索所有题目
+	@RequestMapping(value = "/findQuestionBankByTitle",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findQuestionBankByTitle(@RequestParam(value = "str")String str) {
+		List<Question> list = androidService.findQuestionBankByTitle(str);
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String subjectMsgList = gson.toJson(list);
+		return subjectMsgList;
+	}
+	
+	//根据条件和id搜索问卷
+	@RequestMapping(value = "/findQsByTitle",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findQsByTitle(@RequestParam(value = "uId") int id,@RequestParam(value = "str")String str) {
+		List<Questionnaire> questionnaire = androidService.findQsByTitle(id,str);
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String subjectMsgList = gson.toJson(questionnaire);
+		return subjectMsgList;
+	}
 }

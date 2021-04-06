@@ -46,10 +46,10 @@ public class SummaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.summary_fragment, container, false);
         //准备假的数据
-        Options options1 = new Options(1, "选项1", "");
-        Options options2 = new Options(1, "选项2", "");
-        Options options3 = new Options(1, "选项3", "");
-        Options options4 = new Options(1, "选项4", "");
+        Options options1 = new Options(1, "选项1", "",null);
+        Options options2 = new Options(1, "选项2", "",null);
+        Options options3 = new Options(1, "选项3", "",null);
+        Options options4 = new Options(1, "选项4", "",null);
         final List<Options> lo = new ArrayList<>();
         lo.add(options1);
         lo.add(options2);

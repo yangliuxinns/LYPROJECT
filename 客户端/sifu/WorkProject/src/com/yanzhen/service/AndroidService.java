@@ -12,6 +12,7 @@ import com.yanzhen.entityylx.Questionnaire;
 import com.yanzhen.entityylx.Result;
 import com.yanzhen.entityylx.ResultInfo;
 import com.yanzhen.entityylx.User;
+import com.yanzhen.mapper.AndroidQuestionMapper;
 import com.yanzhen.mapper.AndroidQuestionaresDao;
 
 @Service
@@ -20,6 +21,8 @@ public class AndroidService {
 
 	@Autowired
 	private AndroidQuestionaresDao androidQuestionaresDao;
+	@Autowired
+	private AndroidQuestionMapper questionMapper;
 	
 	//添加问卷
 	
@@ -35,7 +38,7 @@ public class AndroidService {
 				if(question.getType().equals("单选题") || question.getType().equals("多选题") ||question.getType().equals("性别")) {
 					for(int k = 0;k<question.getOptions().size();k++) {
 						Options options = question.getOptions().get(k);
-						androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg());
+						androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg(),options.getImgcontent());
 					}
 				}
 				androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder());
@@ -45,21 +48,28 @@ public class AndroidService {
 			System.out.println("应该先更新");
 			//更新
 			//删除关联表
-			androidQuestionaresDao.deleteRelationById(questionnaire.getId());
-			//更新问卷表
-			androidQuestionaresDao.updateQuestionareById(questionnaire);
-			//添加题目
-			for(int i= 0;i<questionnaire.getList().size();i++) {
-				//遍历存储题目
-				Question question = questionnaire.getList().get(i);
-				int qid = androidQuestionaresDao.insertQuestion(question);
-				if(question.getType().equals("单选题") || question.getType().equals("多选题") ||question.getType().equals("性别")) {
-					for(int k = 0;k<question.getOptions().size();k++) {
-						Options options = question.getOptions().get(k);
-						androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg());
+			int n = androidQuestionaresDao.deleteRelationById(questionnaire.getId());
+			if(n>0) {
+				System.out.println("删除成功呢");
+				//更新问卷表
+				androidQuestionaresDao.updateQuestionareById(questionnaire);
+				System.out.println("问卷的id"+questionnaire.getId());
+				//添加题目
+				for(int i= 0;i<questionnaire.getList().size();i++) {
+					//遍历存储题目
+					Question question = questionnaire.getList().get(i);
+					question.setId(0);
+					int qid = androidQuestionaresDao.insertQuestion(question);
+					if(question.getType().equals("单选题") || question.getType().equals("多选题") ||question.getType().equals("性别")) {
+						for(int k = 0;k<question.getOptions().size();k++) {
+							Options options = question.getOptions().get(k);
+							androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg(),options.getImgcontent());
+						}
 					}
+					androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder());
 				}
-				androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder());
+			}else {
+				System.out.println("删除失败");
 			}
 			return questionnaire.getId();
 		}
@@ -168,5 +178,42 @@ public class AndroidService {
 	//修改问卷状态为草稿
 	public int fixQuestionaresDraf(int id) {
 		return androidQuestionaresDao.fixQuestionaresDraf(id);
+	}
+
+	//根据id搜索问卷
+	public List<Questionnaire> findQuestionaresByUserIdDelete(int id) {
+		return androidQuestionaresDao.findQuestionaresByUserIdDelete(id);
+	}
+
+	//根据id恢复问卷
+	public int revertQuestionaire(List<Integer> obj) {
+		return androidQuestionaresDao.revertQuestionaire(obj);
+	}
+	
+
+	//根据id彻底删除问卷
+	public int deleteQuestionaire(List<Integer> obj) {
+		int n = androidQuestionaresDao.deleteQuestionaireAndQuestion(obj);
+		if(n>0) {
+			return androidQuestionaresDao.deleteQuestionaire(obj);
+		}else {
+			return n;
+		}
+	}
+
+	//搜索问卷
+	public List<Question> findQuestionBank() {
+		return questionMapper.findQuestion();
+	}
+
+	//条件搜索问卷
+	public List<Question> findQuestionBankByTitle(String str) {
+		return questionMapper.findQuestionBankByTitle(str);
+	}
+	
+
+	//按照id和条件搜索问卷
+	public List<Questionnaire> findQsByTitle(int id, String str) {
+		return androidQuestionaresDao.findQsByTitle(id,str);
 	}
 }

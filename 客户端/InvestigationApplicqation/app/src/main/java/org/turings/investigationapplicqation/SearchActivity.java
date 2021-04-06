@@ -26,7 +26,9 @@ public class SearchActivity extends AppCompatActivity {
             public void SearchAciton(String string) {
                 //跳转搜搜索页面
                 Intent intent = new Intent(getApplicationContext(),SearchResultActivity.class);
+                intent.putExtra("search",string);
                 startActivity(intent);
+                finish();
             }
         });
 

@@ -36,19 +36,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tabId) {
                 //改变选中的选项卡颜色
-                textViewMap.get(tabId).setTextColor(getResources().getColor(R.color.colorMain));//获取所有资源
+                textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));//获取所有资源
                 switch(tabId){
 //                    case "tag1":
-////                        imageViewMap.get("tag1").setImageResource(R.mipmap.tagb1);
-//                        imageViewMap.get("tag2").setImageResource(R.mipmap.taga2);
-//                        imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
-//                        textViewMap.get("tag2").setTextColor(getResources().getColor(android.R.color.darker_gray));
-//                        textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
-//                        break;
+//////                        imageViewMap.get("tag1").setImageResource(R.mipmap.tagb1);
+////                        imageViewMap.get("tag2").setImageResource(R.mipmap.taga2);
+////                        imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
+////                        textViewMap.get("tag2").setTextColor(getResources().getColor(android.R.color.darker_gray));
+////                        textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
+////                        break;
                     case "tag2":
 //                        imageViewMap.get("tag1").setImageResource(R.mipmap.taga1);
                         imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
                         imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
+                        textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));//获取所有资源
 //                        textViewMap.get("tag1").setTextColor(getResources().getColor(android.R.color.darker_gray));
                         textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
                         break;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 //                        imageViewMap.get("tag1").setImageResource(R.mipmap.taga1);
                         imageViewMap.get("tag2").setImageResource(R.mipmap.taga2);
                         imageViewMap.get("tag3").setImageResource(R.mipmap.tagb3);
+                        textViewMap.get("tag3").setTextColor(getResources().getColor(R.color.colorMain));//获取所有资源
 //                        textViewMap.get("tag1").setTextColor(getResources().getColor(android.R.color.darker_gray));
                         textViewMap.get("tag2").setTextColor(getResources().getColor(android.R.color.darker_gray));
                         break;
@@ -68,20 +70,26 @@ public class MainActivity extends AppCompatActivity {
                 case "work"://返回工作台
                     fragmentTabHost.setCurrentTab(0);
                     imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
+                    imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
                     textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
+                    textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
                     break;
                 case "self":
                     fragmentTabHost.setCurrentTab(1);
                     imageViewMap.get("tag2").setImageResource(R.mipmap.taga2);
+                    imageViewMap.get("tag3").setImageResource(R.mipmap.tagb3);
                     textViewMap.get("tag2").setTextColor(getResources().getColor(android.R.color.darker_gray));
+                    textViewMap.get("tag3").setTextColor(getResources().getColor(R.color.colorMain));
                     break;
             }
-        }else{
-            //设置默认选中哪一项
-            fragmentTabHost.setCurrentTab(1);
+        }else {
+            fragmentTabHost.setCurrentTab(0);
             imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
+            imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
             textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
+            textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
         }
+
     }
     //初始化
     private void init() {
@@ -105,10 +113,11 @@ public class MainActivity extends AppCompatActivity {
 //                HomePagerFragment.class,//类名.class或者对象名.getClass()去获取大写class对象
 //                null);//传递数据
         TabHost.TabSpec tabSpec2 = fragmentTabHost.newTabSpec("tag2")
-                .setIndicator(getTabSpecView("tag2",R.mipmap.taga2,"工作台"));
+                .setIndicator(getTabSpecView("tag2",R.mipmap.tagb2,"工作台"));
         fragmentTabHost.addTab(tabSpec2,
                 WorkBenchFragment.class,//类名.class或者对象名.getClass()去获取大写class对象
                 null);//传递数据
+        textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
         TabHost.TabSpec tabSpec3 = fragmentTabHost.newTabSpec("tag3")
                 .setIndicator(getTabSpecView("tag3",R.mipmap.taga3,"我的"));
         fragmentTabHost.addTab(tabSpec3,
@@ -141,8 +150,10 @@ public class MainActivity extends AppCompatActivity {
         return view;
     }
     public void setTab(int tab){
-        fragmentTabHost.setCurrentTab(0);
+        fragmentTabHost.setCurrentTab(tab);
         imageViewMap.get("tag2").setImageResource(R.mipmap.tagb2);
+        imageViewMap.get("tag3").setImageResource(R.mipmap.taga3);
         textViewMap.get("tag2").setTextColor(getResources().getColor(R.color.colorMain));
+        textViewMap.get("tag3").setTextColor(getResources().getColor(android.R.color.darker_gray));
     }
 }

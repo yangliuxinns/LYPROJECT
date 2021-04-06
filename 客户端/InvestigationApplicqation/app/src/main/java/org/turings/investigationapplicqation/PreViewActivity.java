@@ -70,7 +70,7 @@ public class PreViewActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
             }
         });
-        webView.loadUrl("http://192.168.10.223:8080/WorkProject/ylx/preview/10");//加载url
+        webView.loadUrl("http://192.168.10.223:8080/WorkProject/ylx/preview/18");//加载url
         //使用webview显示html代码
 //        webView.loadDataWithBaseURL(null,"<html><head><title> 欢迎您 </title></head>" +
 //                "<body><h2>使用webview显示 html代码</h2></body></html>", "text/html" , "utf-8", null);

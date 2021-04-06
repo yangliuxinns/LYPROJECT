@@ -44,7 +44,10 @@ import org.turings.investigationapplicqation.Entity.Options;
 import org.turings.investigationapplicqation.Entity.Question;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,7 +57,7 @@ import java.util.List;
 public class EditTopicSettings extends AppCompatActivity implements View.OnClickListener {
 
     //录像需要的权限
-    private static final String[] VIDEO_PERMISSIONS = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String[] VIDEO_PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static final int VIDEO_PERMISSIONS_CODE = 1;
     private TextView t_type;//编辑的题目类型
     private LinearLayout options;//选项模块
@@ -93,6 +96,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
     private int imgflag = -1;
 
     private int initFlag = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,10 +119,10 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 //控制开关字体颜色
                 if (b) {
                     //选中
-                    aSwitch.setSwitchTextAppearance(EditTopicSettings.this,R.style.s_true);
+                    aSwitch.setSwitchTextAppearance(EditTopicSettings.this, R.style.s_true);
                     question.setRequired(true);
-                }else {
-                    aSwitch.setSwitchTextAppearance(EditTopicSettings.this,R.style.s_false);
+                } else {
+                    aSwitch.setSwitchTextAppearance(EditTopicSettings.this, R.style.s_false);
                     question.setRequired(false);
                 }
             }
@@ -143,8 +147,9 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         addOptions = findViewById(R.id.addOption);
         addOptionOther = findViewById(R.id.addOptionOther);
     }
-    public void judgeQuestionType(String type){
-        switch (type){
+
+    public void judgeQuestionType(String type) {
+        switch (type) {
             case "单选题":
                 options.setVisibility(View.VISIBLE);
                 break;
@@ -172,8 +177,8 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 break;
             case "性别":
                 options.setVisibility(View.VISIBLE);
-                addViewItem(null,"男");
-                addViewItem(null,"女");
+                addViewItem(null, "男");
+                addViewItem(null, "女");
                 break;
             case "手机":
                 options.setVisibility(View.GONE);
@@ -193,6 +198,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 break;
         }
     }
+
     /**
      * Item排序
      */
@@ -201,22 +207,22 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         for (int i = 0; i < addOptionsView.getChildCount(); i++) {
             final int q = i;
             final View childAt = addOptionsView.getChildAt(i);
-            final ImageView btn_remove =  childAt.findViewById(R.id.img_delete);
+            final ImageView btn_remove = childAt.findViewById(R.id.img_delete);
             final ImageView imgDelete = childAt.findViewById(R.id.img_delete2);//删除图片
             final ImageView addImg = childAt.findViewById(R.id.img_content);
             final EditText edt = childAt.findViewById(R.id.edit);
-            if(i == flag - 1){
-                if(question.getOptions().get(q).getImg().equals("sr")){
-                    int icon = getResources().getIdentifier("sr", "mipmap",getPackageName());
+            if (i == flag - 1) {
+                if (question.getOptions().get(q).getImg().equals("sr")) {
+                    int icon = getResources().getIdentifier("sr", "mipmap", getPackageName());
                     // 设置图片
                     addImg.setImageResource(icon);
 
                     edt.setText("其他");
                 }
-                if(question.getOptions().get(q).getContent().equals("男")){
+                if (question.getOptions().get(q).getContent().equals("男")) {
                     edt.setText("男");
                 }
-                if(question.getOptions().get(q).getContent().equals("女")){
+                if (question.getOptions().get(q).getContent().equals("女")) {
                     edt.setText("女");
                 }
             }
@@ -226,13 +232,13 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 public void onClick(View v) {
                     //从LinearLayout容器中删除当前点击到的ViewItem
                     addOptionsView.removeView(childAt);
-                    for(int k = 0;k<question.getOptions().size();k++) {
+                    for (int k = 0; k < question.getOptions().size(); k++) {
                         if (question.getOptions().get(k).getId() == q + 1) {
                             question.getOptions().remove(k);
                             flag--;
                         }
                     }
-                    for(int l = 0;l>question.getOptions().size();l++){
+                    for (int l = 0; l > question.getOptions().size(); l++) {
                         question.getOptions().get(l).setId(l++);
                     }
                 }
@@ -240,8 +246,8 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
             addImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(imgDelete.getVisibility() == View.GONE  && !question.getOptions().get(q).getImg().equals("sr")){
-                        show(view,q);
+                    if (imgDelete.getVisibility() == View.GONE && !question.getOptions().get(q).getImg().equals("sr")) {
+                        show(view, q);
                     }
                 }
             });
@@ -249,8 +255,9 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onClick(View view) {
                     //删除刚刚保存的图片
-                    deletePathFromFile(dataFileStr+question.getOptions().get(q).getImg());
+                    deletePathFromFile(dataFileStr + question.getOptions().get(q).getImg());
                     question.getOptions().get(q).setImg("");
+//                    question.getOptions().get(q).setImgcontent(null);
                     imgDelete.setVisibility(View.GONE);
                     addImg.setImageResource(R.mipmap.img);
                 }
@@ -266,19 +273,19 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
     }
 
     //添加ViewItem
-    private void addViewItem(View view,String wait) {
+    private void addViewItem(View view, String wait) {
         View hotelEvaluateView = View.inflate(this, R.layout.option_single_item, null);
         addOptionsView.addView(hotelEvaluateView);
         flag++;
         Options options = null;
-        if(wait.equals("其他")){
-            options = new Options(flag,"其他","sr");
-        }else if(wait.equals("男")){
-            options = new Options(flag,"男","");
-        }else if(wait.equals("女")){
-            options = new Options(flag,"女","");
-        }else {
-            options = new Options(flag,"","");
+        if (wait.equals("其他")) {
+            options = new Options(flag, "其他", "sr", null);
+        } else if (wait.equals("男")) {
+            options = new Options(flag, "男", "", null);
+        } else if (wait.equals("女")) {
+            options = new Options(flag, "女", "", null);
+        } else {
+            options = new Options(flag, "", "", null);
         }
         question.getOptions().add(options);
         sortHotelViewItem();
@@ -296,19 +303,18 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
     //点击事件
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.addOption:
-                addViewItem(null,"");
+                addViewItem(null, "");
                 break;
             case R.id.btn:
                 Log.i("www", "onClick: 添加");
-                if(et_title.getText().toString().trim().equals("")){
-                    Toast.makeText(getApplicationContext(),"请填写题干",Toast.LENGTH_SHORT).show();
-                }else {
+                if (et_title.getText().toString().trim().equals("")) {
+                    Toast.makeText(getApplicationContext(), "请填写题干", Toast.LENGTH_SHORT).show();
+                } else {
                     printData();
                     question.setType(type);
                     question.setTitle(et_title.getText().toString().trim());
-                    Log.i("www", "onClick: 点击添加"+question.toString());
                     //数据是使用Intent返回
                     Intent intent = new Intent();
                     //把返回数据存入Intent
@@ -320,14 +326,15 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.addOptionOther:
-                addViewItem(null,"其他");
+                addViewItem(null, "其他");
                 break;
         }
     }
+
     //自定义图片选择dialog
-    public void show(View view,Integer i){
+    public void show(View view, Integer i) {
         imgflag = i;
-        dialog = new Dialog(this,R.style.ActionSheetDialogStyle);
+        dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
         //填充对话框的布局
         inflate = LayoutInflater.from(this).inflate(R.layout.custom_picture_selection_dialog, null);
         //初始化控件
@@ -339,7 +346,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         //获取当前Activity所在的窗体
         Window dialogWindow = dialog.getWindow();
         //设置Dialog从窗体底部弹出
-        dialogWindow.setGravity( Gravity.BOTTOM);
+        dialogWindow.setGravity(Gravity.BOTTOM);
         //获得窗体的属性
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.y = 20;//设置Dialog距离底部的距离
@@ -369,23 +376,33 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         });
     }
 
-    public  void fixImg(Integer k){
+    public void fixImg(Integer k) {
         for (int i = 0; i < addOptionsView.getChildCount(); i++) {
-            if(i == k){
+            if (i == k) {
                 View childAt = addOptionsView.getChildAt(i);
                 final ImageView imgDelete = childAt.findViewById(R.id.img_delete2);//删除图片
                 final ImageView addImg = childAt.findViewById(R.id.img_content);
-                String dataFileStr = getFilesDir().getAbsolutePath()+"/"+path;
+                String dataFileStr = getFilesDir().getAbsolutePath() + "/" + path;
                 Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
                 //添加图片
                 addImg.setImageBitmap(bitmap);
                 imgDelete.setVisibility(View.VISIBLE);
                 question.getOptions().get(i).setImg(path);
+//                question.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+//                Log.i("eee", "fixImg:没进入 ");
+//                try {
+//                    byte[] arr = readStream(dataFileStr);
+//                    question.getOptions().get(i).setImgcontent(arr);
+//                    Log.i("eee", "fixImg:寸没存 "+arr.toString());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             }
 
         }
     }
-        @Override
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //获得用户拍照上传的照片
@@ -409,7 +426,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                             path = saveImgToFile(photo);
                             //删除裁剪后保存的图片
                             deletePathFromFile(pathCropPhoto);
-                            if(imgflag != -1){
+                            if (imgflag != -1) {
                                 fixImg(imgflag);
                             }
                         }
@@ -428,7 +445,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         }
     }
 
-//    //删除file目录下指定路径的图片
+    //    //删除file目录下指定路径的图片
     private void deletePathFromFile(String pathCropPhoto) {
         File file = new File(pathCropPhoto);
         if (file.exists()) {
@@ -436,11 +453,11 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         }
     }
 
-//    //保存拍的图片到系统中
+    //    //保存拍的图片到系统中
     private String saveImgToFile(Bitmap photo) {
-        dataFileStr = getFilesDir().getAbsolutePath()+"/";
-        String fileName = System.currentTimeMillis() + ".jpg";
-        File file = new File(dataFileStr+fileName);
+        dataFileStr = getFilesDir().getAbsolutePath() + "/";
+        String fileName = System.currentTimeMillis() + ".jpeg";
+        File file = new File(dataFileStr + fileName);
         try {// 写入图片
             FileOutputStream fos = new FileOutputStream(file);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -456,7 +473,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
     }
 
     //调用相机拍照
-    private void takePhoto(){
+    private void takePhoto() {
         // 跳转到系统的拍照界面
         Intent intentToTakePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 指定照片存储位置为sd卡本目录下
@@ -467,21 +484,21 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         imageUri = Uri.fromFile(new File(mTempPhotoPath));
         //下面这句指定调用相机拍照后的照片存储的路径
         intentToTakePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(intentToTakePhoto,CAMERA_REQUEST_CODE);
+        startActivityForResult(intentToTakePhoto, CAMERA_REQUEST_CODE);
     }
 
     //裁剪图片
     private void startCrop() {
-        String dataFileStr = getFilesDir().getAbsolutePath()+"/";
+        String dataFileStr = getFilesDir().getAbsolutePath() + "/";
         String fileName = System.currentTimeMillis() + ".jpg";
-        pathCropPhoto = dataFileStr+fileName;
-        Uri destinationUri = Uri.fromFile(new File(dataFileStr+fileName));
+        pathCropPhoto = dataFileStr + fileName;
+        Uri destinationUri = Uri.fromFile(new File(dataFileStr + fileName));
         UCrop uCrop = UCrop.of(imageUri, destinationUri);
         UCrop.Options options = new UCrop.Options();
         //设置裁剪图片可操作的手势
         options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
         //设置toolbar颜色
-        options.setToolbarColor(ActivityCompat.getColor(getApplicationContext(),R.color.colorMain));
+        options.setToolbarColor(ActivityCompat.getColor(getApplicationContext(), R.color.colorMain));
         //设置状态栏颜色
         options.setStatusBarColor(ActivityCompat.getColor(getApplicationContext(), R.color.colorMain));
         uCrop.withOptions(options);
@@ -497,4 +514,45 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
+    //图片转二进制流
+    public byte[] readStream(String imagepath) throws Exception {
+        Log.i("www", "readStream:--------------------------------------------------- " + imagepath);
+        FileInputStream fs = new FileInputStream(imagepath);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while (-1 != (len = fs.read(buffer))) {
+            outStream.write(buffer, 0, len);
+        }
+        outStream.close();
+        fs.close();
+        return outStream.toByteArray();
+    }
+
+    public byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 压缩图片
+     * 该方法引用自：http://blog.csdn.net/demonliuhui/article/details/52949203
+     *
+     * @param image
+     * @return
+     */
+    public  Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
 }

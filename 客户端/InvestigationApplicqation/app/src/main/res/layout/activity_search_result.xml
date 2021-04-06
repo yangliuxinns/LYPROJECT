@@ -57,11 +57,19 @@
             android:textSize="18sp"
             android:text="没有满足条件的问卷!!!"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/num"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="符合搜索条件的项目共1条"
+        android:layout_marginLeft="25dp"
+        android:textColor="@color/grey"
+        android:textSize="13sp"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:background="@color/colorWhite"
         android:divider="@null"
         android:dividerHeight="10dp"
         android:id="@+id/list"/>

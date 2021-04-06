@@ -63,6 +63,7 @@ public class SearchView extends LinearLayout {
     private int searchBlockHeight;
     private int searchBlockColor;
 
+    private TextView go;
     /**
      * 构造函数
      * 作用：对搜索框进行初始化
@@ -160,7 +161,6 @@ public class SearchView extends LinearLayout {
                     if (!(mCallBack == null)){
                         mCallBack.SearchAciton(et_search.getText().toString());
                     }
-                    Toast.makeText(context, "需要搜索的是" + et_search.getText(), Toast.LENGTH_SHORT).show();
 
                     // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
                     boolean hasData = hasData(et_search.getText().toString().trim());
@@ -174,6 +174,25 @@ public class SearchView extends LinearLayout {
             }
         });
 
+        //前往
+        go.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 1. 点击搜索按键后，根据输入的搜索字段进行查询
+                // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
+                if (!(mCallBack == null)){
+                    mCallBack.SearchAciton(et_search.getText().toString());
+                }
+
+                // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
+                boolean hasData = hasData(et_search.getText().toString().trim());
+                // 3. 若存在，则不保存；若不存在，则将该搜索字段保存（插入）到数据库，并作为历史搜索记录
+                if (!hasData) {
+                    insertData(et_search.getText().toString().trim());
+                    queryData("");
+                }
+            }
+        });
 
         /**
          * 搜索框的文本变化实时监听
@@ -226,9 +245,6 @@ public class SearchView extends LinearLayout {
                 if (!(bCallBack == null)){
                     bCallBack.BackAciton();
                 }
-
-                //根据输入的内容模糊查询商品，并跳转到另一个界面，这个根据需求实现
-                Toast.makeText(context, "返回到上一页", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -266,6 +282,7 @@ public class SearchView extends LinearLayout {
         // 6. 返回按键
         searchBack = (ImageView) findViewById(R.id.search_back);
 
+        go = findViewById(R.id.go);
     }
 
     /**

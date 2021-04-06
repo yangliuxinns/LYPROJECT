@@ -1,5 +1,6 @@
 package org.turings.investigationapplicqation.Fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,6 +47,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.content.Context.MODE_PRIVATE;
+
 //发布的问卷
 public class PublishedFragment extends Fragment {
     private ListView listView;
@@ -57,7 +61,7 @@ public class PublishedFragment extends Fragment {
     private SmartRefreshLayout srl;//刷新
     private ImageView nullYlx;//如果没有题目显示
     private LinearLayout lyYlx;//空空如也外框
-    private String uId = Integer.toString(1);
+    private String uId;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -102,6 +106,9 @@ public class PublishedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.published_layout, container, false);
+        //获取用户的id
+        SharedPreferences sp = getContext().getSharedPreferences("userInfo",MODE_PRIVATE);
+        uId = sp.getString("uId",null);
         getViews();
         init();
         return view;

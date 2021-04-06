@@ -69,19 +69,13 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <!--下拉重新添加数据-->
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
-            android:id="@+id/refresh"
+        <!--展示数据的列表-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <!--展示数据的列表-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp"
-                android:visibility="gone" />
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
