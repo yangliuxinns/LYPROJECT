@@ -14,6 +14,7 @@
 		    <result property="isRecordWeixinInfo" column="isRecordWeixinInfo"/>
 		    <result property="totalPage" column="totalPage"/>
 		    <result property="isDel" column="isDel"/>
+		    <result property="imgColor" column="img_color"/>
 		    <collection property="list" ofType="com.yanzhen.entityylx.Question" column="uid=id"
 		    		select="com.yanzhen.mapper.AndroidQuestionMapper.findQuestionById">
             </collection>
@@ -21,8 +22,8 @@
 		
 	<!--增加问卷  -->
 	<insert id="insertQuestionare" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Questionnaire">
-    	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel) 
-    	values(#{title},#{instructions},#{startTime},#{endTime},#{IsRelease},#{appearance},#{user_id},#{onlyPhone},#{onlyWeixin},#{isRecordWeixinInfo},#{totalPage},#{isDel}) 
+    	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel,img_color) 
+    	values(#{title},#{instructions},#{startTime},#{endTime},#{IsRelease},#{appearance},#{user_id},#{onlyPhone},#{onlyWeixin},#{isRecordWeixinInfo},#{totalPage},#{isDel},#{imgColor}) 
 	</insert> 
 	
 	<!--题库加入题目  -->
@@ -79,7 +80,8 @@
 	   		 onlyWeixin = #{onlyWeixin},
 	   		 isRecordWeixinInfo = #{isRecordWeixinInfo},
 	   		 totalPage = #{totalPage},
-	   		 isDel = #{isDel}
+	   		 isDel = #{isDel},
+	   		 img_color = #{imgColor}
 	    where id = #{id}
 	</update>
 	<!--更新问卷 删除 -->
@@ -159,4 +161,13 @@
         	#{arr}
     	</foreach>
 	</delete>
+	<!--修改名字-->
+	<update id="fixName">
+	    update user_tb 
+	    set user_name = #{name}
+	    where id = #{id}
+	</update>
+	<select id="findUserById" resultType="com.yanzhen.entityylx.User">
+		select * from user_tb where id = #{id}
+	</select>
 </mapper>

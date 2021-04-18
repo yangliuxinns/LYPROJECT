@@ -96,6 +96,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
     private int imgflag = -1;
 
     private int initFlag = 0;
+    private int oFlag = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +217,6 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                     int icon = getResources().getIdentifier("sr", "mipmap", getPackageName());
                     // 设置图片
                     addImg.setImageResource(icon);
-
                     edt.setText("其他");
                 }
                 if (question.getOptions().get(q).getContent().equals("男")) {
@@ -234,8 +234,12 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                     addOptionsView.removeView(childAt);
                     for (int k = 0; k < question.getOptions().size(); k++) {
                         if (question.getOptions().get(k).getId() == q + 1) {
+                            if(question.getOptions().get(k).getImg().equals("sr")){
+                                oFlag--;
+                            }
                             question.getOptions().remove(k);
                             flag--;
+
                         }
                     }
                     for (int l = 0; l > question.getOptions().size(); l++) {
@@ -280,6 +284,7 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
         Options options = null;
         if (wait.equals("其他")) {
             options = new Options(flag, "其他", "sr", null);
+            oFlag++;
         } else if (wait.equals("男")) {
             options = new Options(flag, "男", "", null);
         } else if (wait.equals("女")) {
@@ -326,7 +331,11 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.addOptionOther:
-                addViewItem(null, "其他");
+                if(oFlag==0){
+                    addViewItem(null, "其他");
+                }else {
+                    Toast.makeText(this,"不能重复添加'其他'选项",Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -516,7 +525,6 @@ public class EditTopicSettings extends AppCompatActivity implements View.OnClick
 
     //图片转二进制流
     public byte[] readStream(String imagepath) throws Exception {
-        Log.i("www", "readStream:--------------------------------------------------- " + imagepath);
         FileInputStream fs = new FileInputStream(imagepath);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];

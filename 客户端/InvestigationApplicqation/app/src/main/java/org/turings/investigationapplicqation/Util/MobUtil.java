@@ -16,7 +16,7 @@ import cn.smssdk.SMSSDK;
 public class MobUtil {
     private boolean debug=false;
     //利用Handler异步处理UI
-    private Handler handler=new Handler() {
+    private static Handler handler=new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int event=msg.arg1;  //处理的事件
@@ -40,12 +40,13 @@ public class MobUtil {
         }
     };
     public final static  String CN="86";
-    private  MobGetcodeListener codelistener;
-    private  MobSendListener sendlistener;
+    private static MobGetcodeListener codelistener;
+    private static MobSendListener sendlistener;
     private CountDownTimer timer;
     private Button countbt;
+    private static MobUtil tm = null;
     //SDK提供的回调类
-    private EventHandler eh=new EventHandler(){
+    private static EventHandler eh=new EventHandler(){
         @Override
         public void afterEvent(int event, int result, Object data) {
             // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
@@ -65,11 +66,17 @@ public class MobUtil {
     static {
         MobSDK.submitPolicyGrantResult(true, null);
     }
-    public MobUtil(){
+    private MobUtil(){
         //这里注册监听
         SMSSDK.registerEventHandler(eh);
     }
-
+    public static MobUtil getInstance(){
+        if(tm == null){
+            SMSSDK.registerEventHandler(eh);
+            tm = new MobUtil();
+        }
+        return tm;
+    }
     /**
      * 发送短信服务
      * @param country 国家 如中国“86”

@@ -111,7 +111,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         btnOk =findViewById(R.id.btn_register);
     }
     public void initdata(){
-        mobUtil1=new MobUtil();
+        mobUtil1=MobUtil.getInstance();
         //为按钮添加倒计时 可选
         mobUtil1.setCountDown(btn,30);
     };

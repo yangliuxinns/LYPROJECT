@@ -61,4 +61,8 @@ public interface AndroidQuestionaresDao {
 	public int deleteQuestionaireAndQuestion(List<Integer> obj);
 	//根据条件搜索问卷
 	public List<Questionnaire> findQsByTitle(@Param("id")int id,@Param("title")String str);
+	//修改名字
+	public int fixName(@Param("name")String name,@Param("id")int id);
+	//查找用户信息
+	public User findUserById(@Param("id")int parseInt);
 }

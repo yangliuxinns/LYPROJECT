@@ -339,6 +339,16 @@ public class AndroidController {
 		return string.toString();
 	}
 	/**
+	 * 修改名字
+	 */
+	@RequestMapping(value = "/fixName",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String fixName(@RequestParam(value = "name")String name,@RequestParam(value = "userId")String userId) {
+		int id = Integer.valueOf(userId);
+		String string = androidService.fixName(name,id);
+		return string.toString();
+	}
+	/**
 	 * 短信登录
 	 * 查找手机账号
 	 */
@@ -346,6 +356,21 @@ public class AndroidController {
 	@ResponseBody
 	public String findPhone(@RequestParam(value = "phone")String phone) {
 		User user = androidService.findPhone(phone);
+		if(user != null) {
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+			String userstr = gson.toJson(user);
+			return userstr;
+		}else {
+			return "不存在用户".toString();
+		}
+	}
+	/**
+	 * 查找用户信息
+	 */
+	@RequestMapping(value = "/findUser",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findUser(@RequestParam(value = "userId")String id) {
+		User user = androidService.findUser(Integer.parseInt(id));
 		if(user != null) {
 			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
 			String userstr = gson.toJson(user);

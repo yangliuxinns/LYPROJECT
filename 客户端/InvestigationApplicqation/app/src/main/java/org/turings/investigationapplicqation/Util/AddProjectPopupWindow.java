@@ -20,7 +20,7 @@ import org.turings.investigationapplicqation.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//选择题型
 public class AddProjectPopupWindow extends PopupWindow {
     private Context context;
     private View view;

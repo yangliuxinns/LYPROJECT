@@ -86,19 +86,25 @@ public class DetailedDataFragment extends Fragment {
         ResultInfo resultInfo1 = new ResultInfo(1,2,2,"选项2");
         ResultInfo resultInfo2 = new ResultInfo(2,1,2,"填空");
         ResultInfo resultInfo3 = new ResultInfo(3,3,1,"选项1");
-        ResultInfo resultInfo4 = new ResultInfo(4,3,2,"选项2");
+        ResultInfo resultInfo4 = new ResultInfo(4,4,2,"选项2");
+        ResultInfo resultInfo5 = new ResultInfo(5,5,2,"选项2");
+        ResultInfo resultInfo6 = new ResultInfo(6,6,2,"选项2");
         List< ResultInfo > resultInfos = new ArrayList<>();
         resultInfos.add(resultInfo1);
         resultInfos.add(resultInfo2);
         resultInfos.add(resultInfo3);
         resultInfos.add(resultInfo4);
+        resultInfos.add(resultInfo5);
+        resultInfos.add(resultInfo6);
         Result result1 = new Result(1,1,new Date(), resultInfos);
+        Result result3 = new Result(1,1,new Date(), resultInfos);
         ResultInfo resultInfo12 = new ResultInfo(1,2,3,"选项3");
         List< ResultInfo > resultInfos2 = new ArrayList<>();
         resultInfos2.add(resultInfo12);
         Result result2 = new Result(1,1,new Date(), resultInfos2);
         mList.add(result1);
         mList.add(result2);
+        mList.add(result3);
     }
 
 

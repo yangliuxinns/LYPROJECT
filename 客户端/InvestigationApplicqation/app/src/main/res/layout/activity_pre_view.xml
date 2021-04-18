@@ -3,12 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
     <ProgressBar
         android:id="@+id/progressbar"
         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -18,128 +16,3 @@
         android:progress="0"
         android:visibility="gone"/>
 </FrameLayout>
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<ScrollView-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    android:background="@color/whitesmoke">-->
-<!--    <RelativeLayout android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:orientation="vertical"-->
-<!--        android:background="@color/whitesmoke">-->
-<!--        <LinearLayout-->
-<!--            android:id="@+id/top"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center"-->
-<!--            android:paddingTop="10dp"-->
-<!--            android:background="@color/colorMain"-->
-<!--            android:layout_alignParentTop="true">-->
-<!--            <ImageView-->
-<!--                android:id="@+id/back"-->
-<!--                android:layout_width="50dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:scaleType="centerInside"-->
-<!--                android:src="@mipmap/back"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:text="预览"-->
-<!--                android:layout_marginRight="50dp"-->
-<!--                android:textSize="20sp"/>-->
-<!--        </LinearLayout>-->
-<!--        <LinearLayout-->
-<!--            android:id="@+id/title"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@+id/top"-->
-<!--            android:orientation="vertical">-->
-<!--            <TextView-->
-<!--                android:id="@+id/txt_title"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@+id/top"-->
-<!--                android:textSize="25sp"-->
-<!--                android:gravity="center"-->
-<!--                android:text="hahah"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                />-->
-<!--            <TextView-->
-<!--                android:id="@+id/txt_info"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@+id/top"-->
-<!--                android:textSize="20sp"-->
-<!--                android:gravity="center"-->
-<!--                android:text="hahah"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                />-->
-<!--        </LinearLayout>-->
-
-<!--        <org.turings.investigationapplicqation.Util.CustomListView-->
-<!--            android:id="@+id/lv_list"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:layout_marginLeft="20dp"-->
-<!--            android:layout_marginRight="20dp"-->
-<!--            android:layout_marginBottom="10dp"-->
-<!--            android:divider="@null"-->
-<!--            android:dividerHeight="10dp"-->
-<!--            android:layout_below="@+id/title"/>-->
-<!--        <LinearLayout-->
-<!--            android:layout_below="@+id/lv_list"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal">-->
-<!--            <Button-->
-<!--                android:id="@+id/btn_login"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginLeft="10dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:layout_height="45dp"-->
-<!--                android:background="@drawable/shape_login"-->
-<!--                android:text="上一页"-->
-<!--                android:textStyle="normal"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:textSize="20sp"/>-->
-<!--            <Button-->
-<!--                android:id="@+id/btn_next"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginLeft="10dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:layout_height="45dp"-->
-<!--                android:background="@drawable/shape_login"-->
-<!--                android:text="下一页"-->
-<!--                android:textStyle="normal"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:textSize="20sp"/>-->
-<!--            <Button-->
-<!--                android:id="@+id/btn_commit"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginLeft="10dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:layout_height="45dp"-->
-<!--                android:background="@drawable/shape_login"-->
-<!--                android:text="提交"-->
-<!--                android:textStyle="normal"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:textSize="20sp"/>-->
-<!--        </LinearLayout>-->
-<!--    </RelativeLayout>-->
-<!--</ScrollView>-->

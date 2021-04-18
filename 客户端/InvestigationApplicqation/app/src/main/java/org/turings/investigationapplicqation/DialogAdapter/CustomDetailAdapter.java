@@ -105,7 +105,7 @@ public class CustomDetailAdapter extends RecyclerView.Adapter<CustomDetailAdapte
             mSource.setText("提交时间："+d1); //来源
             order.setText("序号："+(pos+1));
             time.setText("提交时间："+d1);
-            ip.setText("ipip");
+            ip.setText("ip:132.168.137.191");
             Log.i("eee", "bind: aaaa"+pos);
             //listView
             CustomAnswerAdapter customAnswerAdapter = new CustomAnswerAdapter(questionnaire,bean.getResults(),mContext,R.layout.result_data_item);

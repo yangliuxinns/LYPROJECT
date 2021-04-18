@@ -9,16 +9,16 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
 <title>预览</title>
-<link rel="stylesheet" href="../../static/style1.css">
+<link rel="stylesheet" href="../../static/style.css">
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=xWfzGbIe2LFNjHNtjmsCBsB56UExdabO"></script>
 </head>
 <body>
 <div style="display: flex;justify-content: center;">
 <div style="width: 100%;padding-top: 5%;font-size: 18px;margin-left: 5%;margin-right: 5%">
 	<!--标题  -->
-	<h3 style="margin-bottom: 2%;text-align:center">${questionnaire.title}</h3>
+	<h3 style="margin-bottom: 2%;text-align:center;color:${questionnaire.imgColor};">${questionnaire.title}</h3>
 	<!--简介  -->
-	<p style="font-size: 24px;text-align:left">${questionnaire.instructions}</p>
+	<p style="font-size: 20px;text-align:left">${questionnaire.instructions}</p>
 	<!--题目主体  -->
 	<form id = "form1" method="post">
 		<c:forEach items="${questionnaire.list}" var="question" varStatus="status">
@@ -129,7 +129,7 @@
 			</c:if>
           </c:forEach>
           <div style="display: flex;justify-content: center;">
-          		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:#6AD530;color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
+          		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
           </div>
 	</form>
 	</div>

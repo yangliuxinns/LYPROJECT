@@ -216,4 +216,19 @@ public class AndroidService {
 	public List<Questionnaire> findQsByTitle(int id, String str) {
 		return androidQuestionaresDao.findQsByTitle(id,str);
 	}
+
+	//修改名字
+	public String fixName(String name, int id) {
+		int k =  androidQuestionaresDao.fixName(name,id);
+		if(k>0) {
+			return name;
+		}else {
+			return "修改失败，请重试";
+		}
+	}
+
+	//查找User
+	public User findUser(int parseInt) {
+		return androidQuestionaresDao.findUserById(parseInt);
+	}
 }

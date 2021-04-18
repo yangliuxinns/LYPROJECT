@@ -332,6 +332,15 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intent4,6);
                 break;
             case R.id.preview://点击预览
+                for(Question qu:questionnaire.getList()){
+                    for(int i=0;i<qu.getOptions().size();i++){
+                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                            String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                            Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                            qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                        }
+                    }
+                }
                 //先保存
                 new Thread(new Runnable() {
                     @Override
@@ -454,9 +463,8 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                     }
                     questionnaire.setTotalPage(total);
                 }else {
-                    order++;
                     question.setPageNumber(total);
-                    question.setOrder(order);
+                    question.setOrder(lq.size()+1);
                     lq.add(question);
                 }
                 questionnaire.setList(lq);
@@ -476,6 +484,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 Question qu = (Question) data.getSerializableExtra("result_question");
                 for(int i=0;i<qu.getOptions().size();i++){
                     if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                        Log.i("rrr", "onActivityResult: 性别有图片吗"+qu.getOptions().get(i).getImg());
                         String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
                         Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
                         qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
@@ -495,6 +504,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 break;
             case 7://批量添加题目
                 List<Question> qs = (List<Question>) data.getSerializableExtra("qs");
+                order = lq.size();
                 for(Question question1 : qs){
                     Log.i("bb", "onActivityResult:批量添加 "+question1.toString());
                     order++;

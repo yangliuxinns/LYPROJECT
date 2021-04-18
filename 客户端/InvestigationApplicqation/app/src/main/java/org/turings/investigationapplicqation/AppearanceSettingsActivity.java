@@ -28,16 +28,30 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
     private List<Photo> ps = new ArrayList<>();
     private TextView cancel;//取消
     private TextView ok;//使用
-    private String postion;//选中了第几个
+    private int postion;//选中了第几个
     private Questionnaire questionnaire;//问卷
     private Questionnaire questionnaire2;
+    private List<String> colors = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appearance_settings);
         questionnaire = (Questionnaire) getIntent().getSerializableExtra("q_data");
         questionnaire2 = (Questionnaire) getIntent().getSerializableExtra("q_data");
-        Photo photo = new Photo("第一张","abg1",1);
+        colors.add("#008B8B");
+        colors.add("#2E8B57");
+        colors.add("#C0C0C0");
+        colors.add("#4682B4");
+        colors.add("#FFB6C1");
+        colors.add("#FA8072");
+        colors.add("#FFC0CB");
+        colors.add("#000000");
+        colors.add("#A9A9A9");
+        colors.add("#000033");
+        colors.add("#6495ED");
+        colors.add("#FFC0CB");
+        colors.add("#ffccff");
+        Photo photo = new Photo("第1张","abg1",1);
         Photo photo1 = new Photo("第2张","abg2",-1);
         Photo photo2 = new Photo("第3张","abg3",-1);
         Photo photo3 = new Photo("第4张","abg4",-1);
@@ -46,10 +60,10 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
         Photo photo6= new Photo("第7张","abg7",-1);
         Photo photo7= new Photo("第8张","abg8",-1);
         Photo photo8= new Photo("第9张","abg9",-1);
-        Photo photo9= new Photo("第10张","abg1",-1);
-        Photo photo10= new Photo("第11张","abg2",-1);
-        Photo photo11= new Photo("第12张","abg3",-1);
-        Photo photo12= new Photo("第13张","abg4",-1);
+        Photo photo9= new Photo("第10张","abg10",-1);
+        Photo photo10= new Photo("第11张","abg11",-1);
+        Photo photo11= new Photo("第12张","abg12",-1);
+        Photo photo12= new Photo("第13张","abg13",-1);
         List<Photo> l = new ArrayList<>();
         l.add(photo);l.add(photo1);l.add(photo2);l.add(photo3);l.add(photo4);l.add(photo5);l.add(photo6);l.add(photo7);
         l.add(photo8);
@@ -69,7 +83,7 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
                         l.get(i).setPos(-1);
                     }
                 }
-                postion = position+"";
+                postion = position;
                 ps.clear();
                 ps.addAll(l);
                 picGridAdapter.notifyDataSetChanged();
@@ -78,10 +92,13 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
         picGridAdapter.setmOnItemClickListener(new PicGridAdapter.onItemClickListener() {
             @Override
             public void onNumClick(int position) {
-                Toast.makeText(getApplicationContext(),"选中了第"+position,Toast.LENGTH_SHORT).show();
-                postion = position+"";
-
+                postion = position;
                 //调用预览
+                Intent intent = new Intent(AppearanceSettingsActivity.this,PreAppearanceActivity.class);
+                intent.putExtra("img",ps.get(postion).getImg());
+                intent.putExtra("title",questionnaire.getTitle());
+                intent.putExtra("color",colors.get(postion));
+                startActivity(intent);
             }
         });
 
@@ -108,8 +125,8 @@ public class AppearanceSettingsActivity extends AppCompatActivity implements Vie
                 finish();
                 break;
             case R.id.btn_ok:
-                questionnaire.setAppearance(postion);
-                Log.i("rrr", "onClick: 外观"+questionnaire.getAppearance());
+                questionnaire.setAppearance(ps.get(postion).getImg()+".jpg");
+                questionnaire.setImgColor(colors.get(postion));
                 //直接设定返回
                 Intent intent = new Intent();
                 //把返回数据存入Intent

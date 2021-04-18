@@ -3,6 +3,14 @@ package org.turings.investigationapplicqation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,6 +28,8 @@ import android.widget.Toast;
 import org.turings.investigationapplicqation.Entity.User;
 import org.turings.investigationapplicqation.Util.MobUtil;
 
+import java.io.IOException;
+
 //修改手机号
 public class FixPhoneActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,9 +40,11 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
     private Button get_m;
     boolean isgrant=false;
     boolean debug=false;
-    private MobUtil mobUtil;
+    private MobUtil mobUtil2;
     private User user;
+    private OkHttpClient okHttpClient;
     int i = 30;
+    private EventHandler eventHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +67,9 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
         btn.setOnClickListener(this);
     }
     public void initdata(){
-        mobUtil=new MobUtil();
+        mobUtil2=MobUtil.getInstance();
         //为按钮添加倒计时 可选
-        mobUtil.setCountDown(get_m,30);
+        mobUtil2.setCountDown(get_m,30);
     };
 
     private void applyPermission(){
@@ -110,7 +122,8 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
                 } // 2. 通过sdk发送短信验证
                 if (debug)
                     Log.d("MobActivity", "onClick: 发送验证码");
-                mobUtil.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
+
+                mobUtil2.getVerrificationCode(MobUtil.CN, phoneNums, new MobUtil.MobGetcodeListener() {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(getApplicationContext(),"成功请求验证码",Toast.LENGTH_SHORT).show();
@@ -125,7 +138,7 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
                 });
                 break;
             case R.id.btn://修改设置
-                mobUtil.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
+                mobUtil2.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
                     @Override
                     public void onSuccess() {
                         if(fixphone.getText().toString().equals("") || fixphone.getText().toString().isEmpty()){
@@ -136,7 +149,7 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-//                                    uploadToDataBase();
+                                    uploadToDataBase(phoneNums,user.getId());
                                 }
                             }).start();
                         }
@@ -193,5 +206,51 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
             return false;
         else
             return mobileNums.matches(telRegex);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SMSSDK.unregisterEventHandler(eventHandler);
+    }
+    //去修改
+    private void uploadToDataBase(String phone,int userId) {
+        okHttpClient = new OkHttpClient();
+        FormBody formBody = new FormBody.Builder()
+                .add("name",phone)
+                .add("userId", String.valueOf(userId))
+                .build();
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/fixPhone";
+        final Request request = new Request.Builder().post(formBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String str = response.body().string();
+                        if(str.equals("修改失败，请重试")){
+                            Toast.makeText(getApplicationContext(),"修改失败，请重试",Toast.LENGTH_SHORT).show();
+                        }else {
+                            mobUtil2.unregister();
+                            user.setPhone(phone);
+                            Intent intent1 = new Intent();
+                            //把返回数据存入Intent
+                            intent1.putExtra("q_data",user);
+                            //设置返回数据
+                            setResult(1, intent1);//RESULT_OK为自定义常量
+                            //关闭Activity
+                            finish();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 }

@@ -115,23 +115,20 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                     }
                     Toast.makeText(getApplicationContext(), "注册成功，现在登录吧",
                             Toast.LENGTH_SHORT).show();
-                    mobUtil.unregister();
 
                 }else if(msg.obj.equals("注册失败，请重试")){
                     Toast.makeText(getApplicationContext(), "失败请重试",
                             Toast.LENGTH_SHORT).show();
-                    mobUtil.unregister();
                 }else {
                     Toast.makeText(getApplicationContext(), "号码注册过",
                             Toast.LENGTH_SHORT).show();
-                    mobUtil.unregister();
                 }
             } else if(msg.what == 2){
                 if(msg.obj.equals("用户名或密码不匹配")){
                     Toast.makeText(getApplicationContext(), "用户名密码不匹配",
                             Toast.LENGTH_SHORT).show();
-                    mobUtil.unregister();
                 }else {
+                    mobUtil.unregister();
                     //进入主activity
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
                     User user = gson.fromJson(msg.obj.toString(),new TypeToken<User>(){}.getType());
@@ -143,7 +140,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.setAction("work");
                     startActivity(intent);
-                    mobUtil.unregister();
+                    finish();
                 }
             }
         }
@@ -210,7 +207,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
         btnDuan.setOnClickListener(this);
     }
     public void initdata(){
-        mobUtil=new MobUtil();
+        mobUtil=MobUtil.getInstance();
         //为按钮添加倒计时 可选
         mobUtil.setCountDown(getMNum,30);
     };
@@ -287,6 +284,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                             Toast.makeText(getApplicationContext(),"密码不能为空",Toast.LENGTH_SHORT).show();
                         }else {
                             //去注册
+                            mobUtil.unregister();
                             Toast.makeText(getApplicationContext(),"注册",Toast.LENGTH_SHORT).show();
                             new Thread(new Runnable() {
                                 @Override
@@ -305,6 +303,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                 });
                 break;
             case R.id.btn_login:
+                mobUtil.unregister();
                 validateLogin();
                 break;
             case R.id.secret_tv://隐私条款

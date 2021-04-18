@@ -16,6 +16,7 @@ public class Questionnaire implements Serializable {
     private Boolean onlyWeixin;//仅限微信作答
     private Boolean isRecordWeixinInfo;//是否记录微信信息
     private String appearance;//记录外观
+    private String imgColor;//主题色
     private Date startTime;//开始时间
     private Date endTime;//结束时间
 
@@ -26,7 +27,7 @@ public class Questionnaire implements Serializable {
     }
 
 
-    public Questionnaire(int id, String title, String instructions, boolean isRelease, List<Question> list, int totalPage, Boolean onlyPhone, Boolean onlyWeixin, Boolean isRecordWeixinInfo, String appearance) {
+    public Questionnaire(int id, String title, String instructions, boolean isRelease, List<Question> list, int totalPage, Boolean onlyPhone, Boolean onlyWeixin, Boolean isRecordWeixinInfo, String appearance,String imgColor) {
         this.id = id;
         this.title = title;
         this.instructions = instructions;
@@ -37,6 +38,7 @@ public class Questionnaire implements Serializable {
         this.onlyWeixin = onlyWeixin;
         this.isRecordWeixinInfo = isRecordWeixinInfo;
         this.appearance = appearance;
+        this.imgColor = imgColor;
     }
 
     public Questionnaire(int id, String title, String instructions, boolean isRelease, List<Question> list, int totalPage, Boolean onlyPhone, Boolean onlyWeixin, Boolean isRecordWeixinInfo, String appearance, Date startTime, Date endTime,Boolean isDel) {
@@ -206,5 +208,13 @@ public class Questionnaire implements Serializable {
 
     public void setSelect(boolean select) {
         this.select = select;
+    }
+
+    public String getImgColor() {
+        return imgColor;
+    }
+
+    public void setImgColor(String imgColor) {
+        this.imgColor = imgColor;
     }
 }

@@ -3,14 +3,24 @@ package org.turings.investigationapplicqation.Fragment;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.linchaolong.android.imagepicker.ImagePicker;
 import com.linchaolong.android.imagepicker.cropper.CropImage;
 import com.linchaolong.android.imagepicker.cropper.CropImageView;
@@ -23,11 +33,19 @@ import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.RubbishActivity;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -47,7 +65,10 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
     private TextView name;
     private TextView phone;
     private LinearLayout info;
-    private User user;
+    private User user1;
+    private OkHttpClient okHttpClient;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -63,10 +84,19 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+
     //初始化
     private void init() {
         //获得头像用户名手机号等信息
-        user = new User(1,"haha","a","123","111");
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("userInfo",MODE_PRIVATE);
+        String uid= sharedPreferences.getString("uId","");
+        //搜索user
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                uploadToDataBase(uid);
+            }
+        }).start();
     }
 
     //注册
@@ -125,7 +155,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                         // 设置网格显示模式
                         .setGuidelines(CropImageView.Guidelines.OFF)
                         // 圆形/矩形
-                        .setCropShape(CropImageView.CropShape.RECTANGLE)
+                        .setCropShape(CropImageView.CropShape.OVAL)
                         // 调整裁剪后的图片最终大小
                         .setRequestedSize(960, 540)
                         // 宽高比
@@ -143,7 +173,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case R.id.info://修改个人信息
                 Intent intent1 = new Intent(view.getContext(), FixPAndMActivity.class);
-                intent1.putExtra("user", (Serializable) user);
+                intent1.putExtra("user", (Serializable) user1);
                 startActivity(intent1);
                 getActivity().finish();
                 break;
@@ -170,4 +200,54 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+    //去修改
+    private void uploadToDataBase(String userId) {
+        okHttpClient = new OkHttpClient();
+        FormBody formBody = new FormBody.Builder()
+                .add("userId", userId)
+                .build();
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/findUser";
+        final Request request = new Request.Builder().post(formBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String str = response.body().string();
+                        Message msg = Message.obtain();
+                        msg.obj = str;
+                        msg.what = 2;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }).start();
+    }
+    private Handler handler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        public void handleMessage(Message msg) {
+                if (msg.what == 2) {
+                    if (msg.obj.equals("不存在用户")) {
+                        Toast.makeText(getActivity(), "不存在用户",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        //进入主activity
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+                        User user = gson.fromJson(msg.obj.toString(), new TypeToken<User>() {
+                        }.getType());
+                        user1 = user;
+                        name.setText("用户名："+user1.getUser_name());
+                        phone.setText("电话号码："+user1.getPhone());
+                    }
+                }
+        }
+    };
 }
