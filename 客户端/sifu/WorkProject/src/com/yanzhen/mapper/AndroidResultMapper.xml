@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanzhen.mapper.AndroidResultMapper">
+		<resultMap type="com.yanzhen.entityylx.ResultInfo" id="resultInfoMap">
+				<id column="id" property="id"/>
+                <result property="question_number" column="question_number"/>
+                <result property="order_number" column="order_number"/>
+                <result property="result" column="result"/>
+                <result property="user_id" column="user_id"/>
+		</resultMap>	
+		<select id="findResultInfoById" resultMap="resultInfoMap">
+			SELECT * from detail_result where user_id = #{uid}
+		</select>
+</mapper>

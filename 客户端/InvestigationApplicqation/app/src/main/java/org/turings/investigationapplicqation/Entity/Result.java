@@ -8,6 +8,7 @@ public class Result {
 	private int id;//答题者
 	private int questionnatre_id;//问卷id
 	private Date time;//答题时间
+	private String ip;//地址ip
 	private List<ResultInfo> results;//答案
 	
 	
@@ -75,12 +76,22 @@ public class Result {
 	}
 
 
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
 
 	@Override
 	public String toString() {
-		return "Result [id=" + id + ", questionnatre_id=" + questionnatre_id + ", time=" + time + ", results=" + results
-				+ "]";
+		return "Result{" +
+				"id=" + id +
+				", questionnatre_id=" + questionnatre_id +
+				", time=" + time +
+				", ip='" + ip + '\'' +
+				", results=" + results +
+				'}';
 	}
-	
-	
 }

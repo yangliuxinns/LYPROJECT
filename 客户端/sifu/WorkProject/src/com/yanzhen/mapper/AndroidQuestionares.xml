@@ -6,7 +6,7 @@
 		    <result property="title" column="title"/>
 		    <result property="instructions" column="instruction"/>
 		    <result property="startTime" column="start_time"/>
-		    <result property="IsRelease" column="IsRelease"/>
+		    <result property="IsRelease" column="issued"/>
 		    <result property="appearance" column="img"/>
 		    <result property="user_id" column="user_id"/>
 		    <result property="onlyPhone" column="onlyPhone"/>
@@ -19,7 +19,15 @@
 		    		select="com.yanzhen.mapper.AndroidQuestionMapper.findQuestionById">
             </collection>
 	</resultMap>
-		
+	<resultMap type="com.yanzhen.entityylx.Result" id="resultMap">
+		    <id property="id" column="id"/>
+		    <result property="questionnatre_id" column="questionnatre_id"/>
+		    <result property="time" column="time"/>
+		    <result property="ip" column="ip"/>
+		    <collection property="results" ofType="com.yanzhen.entityylx.Result" column="uid=id"
+		    		select="com.yanzhen.mapper.AndroidResultMapper.findResultInfoById">
+            </collection>
+	</resultMap>
 	<!--增加问卷  -->
 	<insert id="insertQuestionare" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Questionnaire">
     	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel,img_color) 
@@ -57,7 +65,7 @@
 	</select>
 	<!-- 根据id和条件搜索问卷 -->
 	<select id="findQsByTitle" resultMap="questionnairerMap">
-		select * from questionnaire_tb where user_id = #{id} and title like concat('%',#{title},'%');
+		select * from questionnaire_tb where user_id = #{id} and title like concat('%',#{title},'%') and isDel = false;
 	</select>
 	<select id="findQuestionaresByUserIdAndTitle" resultMap="questionnairerMap">
 		select * from questionnaire_tb where user_id = #{id} and title like "%"#{title}"%"
@@ -167,7 +175,30 @@
 	    set user_name = #{name}
 	    where id = #{id}
 	</update>
+	<!--修改手机号-->
+	<update id="fixPhone">
+	    update user_tb 
+	    set phone = #{phone}
+	    where id = #{id}
+	</update>
+	<!--修改密码-->
+	<update id="fixMsd">
+	    update user_tb 
+	    set password = #{psd}
+	    where id = #{id}
+	</update>
+	<!--修改头像-->
+	<update id="fixHead">
+	    update user_tb 
+	    set head_protrait = #{uri}
+	    where id = #{id}
+	</update>
 	<select id="findUserById" resultType="com.yanzhen.entityylx.User">
 		select * from user_tb where id = #{id}
+	</select>
+	<!-- 搜索答案 -->
+	<!-- 根据id搜索问卷 -->
+	<select id="findResultByQuestionaireId" resultMap="resultMap">
+		select * from results_questionnaire_tb where questionnatre_id = #{id}
 	</select>
 </mapper>

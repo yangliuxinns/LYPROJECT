@@ -3,9 +3,36 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/whitesmoke">
-    <ListView
-        android:id="@+id/list"
+    <LinearLayout
+    android:id="@+id/lyylx"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:visibility="gone"
+    android:background="@drawable/dialog_stroke_top_layout_ylx"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:gravity="center">
+    <ImageView
+        android:id="@+id/nullYlx"
+        android:layout_width="300dp"
+        android:layout_height="380dp"
+        android:paddingBottom="50dp"
+        android:src="@mipmap/mistakennullylx" />
+</LinearLayout>
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"/>
+        android:layout_height="match_parent">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/studyimgylx" />
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

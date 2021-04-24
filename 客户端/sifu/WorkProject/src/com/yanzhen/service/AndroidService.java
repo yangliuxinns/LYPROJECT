@@ -231,4 +231,50 @@ public class AndroidService {
 	public User findUser(int parseInt) {
 		return androidQuestionaresDao.findUserById(parseInt);
 	}
+	
+
+	//修改手机号
+	public String fixPhone(String phone, int id) {
+		int k =  androidQuestionaresDao.fixPhone(phone,id);
+		if(k>0) {
+			return phone;
+		}else {
+			return "修改失败，请重试";
+		}
+	}
+
+	//按照id修改密码
+	public String fixMsd(String psd,String nPsd, int id) {
+		//判断原密码是否正确
+		User user = androidQuestionaresDao.findUserById(id);
+		if(user.getPassword().equals(nPsd)) {
+			//相同修改
+			int n = androidQuestionaresDao.fixMsd(psd,id);
+			if(n>0) {
+				return "修改成功";
+			}else {
+				return "修改失败";
+			}
+		}else {
+			//不修改
+			return "原密码错误，不能修改";
+		}
+		
+	}
+	//修改头像
+	public String fixHead(String uri, int id) {
+		int k =  androidQuestionaresDao.fixHead(uri,id);
+		if(k>0) {
+			return uri;
+		}else {
+			return "修改失败，请重试";
+		}
+	}
+
+	//搜索答案
+	public List<Result> findResultByQuestionaireId(int id) {
+		//搜索所有回答
+		List<Result> results = androidQuestionaresDao.findResultByQuestionaireId(id);
+		return results;
+	}
 }

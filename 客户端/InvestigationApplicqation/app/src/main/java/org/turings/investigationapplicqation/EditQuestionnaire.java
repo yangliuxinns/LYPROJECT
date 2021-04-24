@@ -334,7 +334,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
             case R.id.preview://点击预览
                 for(Question qu:questionnaire.getList()){
                     for(int i=0;i<qu.getOptions().size();i++){
-                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                        if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
                             String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
                             Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
                             qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
@@ -483,8 +483,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
             case 4:
                 Question qu = (Question) data.getSerializableExtra("result_question");
                 for(int i=0;i<qu.getOptions().size();i++){
-                    if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
-                        Log.i("rrr", "onActivityResult: 性别有图片吗"+qu.getOptions().get(i).getImg());
+                    if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
                         String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
                         Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
                         qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));

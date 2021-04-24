@@ -62,7 +62,7 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
                 if(msg.obj.equals("不存在用户")){
                     Toast.makeText(getApplicationContext(), "不存在用户，请先注册",
                             Toast.LENGTH_SHORT).show();
-                    mobUtil1.unregister();
+//                    mobUtil1.unregister();
                 }else {
                     //进入主activity
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
@@ -75,7 +75,7 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.setAction("work");
                     startActivity(intent);
-                    mobUtil1.unregister();
+//                    mobUtil1.unregister();
                 }
             }
         }
@@ -107,7 +107,7 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
     }
     public void initdata(){
         mobUtil1=MobUtil.getInstance();
-        //为按钮添加倒计时 可选
+//        //为按钮添加倒计时 可选
         mobUtil1.setCountDown(btn,30);
     };
 
@@ -148,7 +148,7 @@ public class SMSLoginActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.back:
                 //返回
-                mobUtil1.unregister();
+//                mobUtil1.unregister();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.setAction("work");
                 startActivity(intent);

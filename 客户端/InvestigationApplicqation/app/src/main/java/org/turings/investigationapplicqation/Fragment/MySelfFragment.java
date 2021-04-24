@@ -27,6 +27,7 @@ import com.linchaolong.android.imagepicker.cropper.CropImageView;
 
 import org.turings.investigationapplicqation.CircleImageView;
 import org.turings.investigationapplicqation.Entity.User;
+import org.turings.investigationapplicqation.FixInfoActivity;
 import org.turings.investigationapplicqation.FixPAndMActivity;
 import org.turings.investigationapplicqation.LoginAndRegisterActivity;
 import org.turings.investigationapplicqation.MainActivity;
@@ -68,6 +69,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
     private User user1;
     private OkHttpClient okHttpClient;
 
+    private String uid;
 
     @Nullable
     @Override
@@ -89,7 +91,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
     private void init() {
         //获得头像用户名手机号等信息
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("userInfo",MODE_PRIVATE);
-        String uid= sharedPreferences.getString("uId","");
+        uid= sharedPreferences.getString("uId","");
         //搜索user
         new Thread(new Runnable() {
             @Override
@@ -106,6 +108,7 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
         info.setOnClickListener(this);
         ly_rubbish.setOnClickListener(this);
         ly_canel.setOnClickListener(this);
+        ly_fixPsd.setOnClickListener(this);
     }
 
     private void getViews() {
@@ -144,7 +147,13 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
 
             // 裁剪图片回调
             @Override public void onCropImage(Uri imageUri) {
-                circleImageView.setImageURI(imageUri);
+                String uri = String.valueOf(imageUri);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadToDataBase(uri,uid);
+                    }
+                }).start();
             }
 
             // 自定义裁剪配置
@@ -157,9 +166,9 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                         // 圆形/矩形
                         .setCropShape(CropImageView.CropShape.OVAL)
                         // 调整裁剪后的图片最终大小
-                        .setRequestedSize(960, 540)
+                        .setRequestedSize(600, 600)
                         // 宽高比
-                        .setAspectRatio(16, 9);
+                        .setAspectRatio(1, 1);
             }
 
             // 用户拒绝授权回调
@@ -198,6 +207,12 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent3);
                 getActivity().finish();
                 break;
+            case R.id.ly_fixPsd:
+                Intent intent4 = new Intent(getContext(), FixInfoActivity.class);
+                intent4.putExtra("uId",uid);
+                startActivity(intent4);
+                getActivity().finish();
+                break;
         }
     }
     //去修改
@@ -231,6 +246,39 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
             }
         }).start();
     }
+
+    //存储图片
+    private void uploadToDataBase(String uri,String userId) {
+        okHttpClient = new OkHttpClient();
+        FormBody formBody = new FormBody.Builder()
+                .add("uri", uri)
+                .add("userId", userId)
+                .build();
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/fixHead";
+        final Request request = new Request.Builder().post(formBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String str = response.body().string();
+                        Message msg = Message.obtain();
+                        msg.obj = str;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }).start();
+    }
     private Handler handler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void handleMessage(Message msg) {
@@ -245,7 +293,21 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                         }.getType());
                         user1 = user;
                         name.setText("用户名："+user1.getUser_name());
-                        phone.setText("电话号码："+user1.getPhone());
+                        phone.setText("手机号："+user1.getPhone());
+                        if(user1.getHead_protrait() == null){
+                            //没有头像默认
+                            int icon = getResources().getIdentifier("ptylx", "mipmap",getActivity().getPackageName());
+                            // 设置图片
+                            circleImageView.setImageResource(icon);
+                        }else {
+                            circleImageView.setImageURI(Uri.parse(user1.getHead_protrait()));
+                        }
+                    }
+                }else if(msg.what == 1){
+                    if(msg.obj.equals("修改失败，请重试")){
+                        Toast.makeText(getActivity(),"请重试",Toast.LENGTH_SHORT).show();
+                    }else {
+                        circleImageView.setImageURI(Uri.parse((String) msg.obj));
                     }
                 }
         }

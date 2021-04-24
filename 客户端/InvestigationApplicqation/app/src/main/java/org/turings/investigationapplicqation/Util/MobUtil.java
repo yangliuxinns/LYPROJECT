@@ -68,7 +68,6 @@ public class MobUtil {
     }
     private MobUtil(){
         //这里注册监听
-        SMSSDK.registerEventHandler(eh);
     }
     public static MobUtil getInstance(){
         if(tm == null){

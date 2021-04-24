@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -71,10 +72,12 @@ public class FixPAndMActivity extends AppCompatActivity implements View.OnClickL
         switch(resultCode){
             case 1://修改名字
                 user = (User) data.getSerializableExtra("q_data");
-
                 break;
             case 2://修改手机号
                 user = (User) data.getSerializableExtra("q_data");
+                SharedPreferences sharedPreferences= getSharedPreferences("userInfo",MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("phone",user.getPhone());
                 break;
 
         }

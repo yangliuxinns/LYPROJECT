@@ -1,6 +1,7 @@
 package org.turings.investigationapplicqation.DialogAdapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,7 @@ public class CustomSearchResultListViewAdapter extends BaseAdapter {
         }
         holder.title.setText(list.get(listPosition).getTitle());
         holder.instruction.setText(list.get(listPosition).getInstructions());
+        Log.i("ttt", "getView: 是否发布"+list.get(listPosition).isRelease());
         if(list.get(listPosition).isRelease()){
             //已发布
             holder.img.setImageResource(R.mipmap.statesok);

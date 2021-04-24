@@ -128,7 +128,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                     Toast.makeText(getApplicationContext(), "用户名密码不匹配",
                             Toast.LENGTH_SHORT).show();
                 }else {
-                    mobUtil.unregister();
+//                    mobUtil.unregister();
                     //进入主activity
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
                     User user = gson.fromJson(msg.obj.toString(),new TypeToken<User>(){}.getType());
@@ -208,7 +208,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
     }
     public void initdata(){
         mobUtil=MobUtil.getInstance();
-        //为按钮添加倒计时 可选
+//        //为按钮添加倒计时 可选
         mobUtil.setCountDown(getMNum,30);
     };
 
@@ -303,7 +303,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                 });
                 break;
             case R.id.btn_login:
-                mobUtil.unregister();
+//                mobUtil.unregister();
                 validateLogin();
                 break;
             case R.id.secret_tv://隐私条款
@@ -312,13 +312,13 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
             case R.id.service_tv://用户服务协议
                 break;
             case R.id.ly_forget_psd://忘记密码
-                mobUtil.unregister();
+//                mobUtil.unregister();
                 Intent intent = new Intent(getApplicationContext(),ForgotPasswordActivity.class);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btn_duan://短信登录
-                mobUtil.unregister();
+//                mobUtil.unregister();
                 Intent intent1 = new Intent(getApplicationContext(),SMSLoginActivity.class);
                 startActivity(intent1);
                 finish();

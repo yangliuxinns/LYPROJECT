@@ -92,13 +92,15 @@ public class AndroidController {
 		for(int i=0 ;i<questionnaire.getList().size();i++) {
 			//循环所有题目
 			Question question = questionnaire.getList().get(i);
-			if(question.getType().equals("填空题") || question.getType().equals("姓名") || question.getType().equals("日期") || question.getType().equals("手机号") || question.getType().equals("地区"))  {
+			if(question.getType().equals("填空题") || question.getType().equals("姓名") || question.getType().equals("日期") || question.getType().equals("手机") || question.getType().equals("地区") || question.getType().equals("地图"))  {
+				System.out.println("题目类型："+question.getType());
 				String re = request.getParameter(question.getOrder()+"");
 				System.out.println("第"+question.getOrder()+"答案："+ re);
 				ResultInfo resultInfo = new ResultInfo(0,question.getOrder(),0,re);
 				list.add(resultInfo);
 			}else if(question.getType().equals("单选题") || question.getType().equals("性别")) {
 				String re = request.getParameter("option"+question.getOrder());
+				System.out.print("选项内容："+re);
 				for(int k=0;k<question.getOptions().size();k++) {
 					if(re.equals(question.getOptions().get(k).getContent())) {
 						if(question.getOptions().get(k).getImg().equals("sr")) {
@@ -137,6 +139,8 @@ public class AndroidController {
 		result.setQuestionnatre_id(id);
 		Date dd=new Date();
 		result.setTime(dd);
+		//记得ip
+		result.setIp("");
 		result.setResults(list);
 		int k = androidService.saveAnswer(result);
 		if(k>0) {
@@ -173,6 +177,21 @@ public class AndroidController {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
+	}
+	//根据问卷id，搜索问卷的答案
+	@RequestMapping(value = "/findResultByQuestionaireId",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findResultByQuestionaireId(@RequestParam(value = "qId") int id) {
+		List<Result> results = androidService.findResultByQuestionaireId(id);
+		for(Result result : results) {
+			System.out.println("问卷结果"+result.toString());
+			for(ResultInfo resultInfo:result.getResults()) {
+				System.out.println("详细结果"+resultInfo.toString());
+			}
+		}
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String str = gson.toJson(results);
+		return str;
 	}
 	//发布问卷，改变问卷状态
 	@RequestMapping(value = "/fixQuestionaresRelease",produces="text/json;charset=utf-8")
@@ -220,7 +239,16 @@ public class AndroidController {
 	@RequestMapping(value = "/findQuestionaresByUserIdAndTitle",produces="text/json;charset=utf-8")
 	@ResponseBody
 	public String findQuestionaresByUserIdAndTitle(@RequestParam(value = "uId") int id,@RequestParam(value = "title") String title) {
-		List<Questionnaire> questionnaire = androidService.findQuestionaresByUserIdAndTitle(id,title);
+		List<Questionnaire> questionnaire1 = androidService.findQuestionaresByUserIdAndTitle(id,title);
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		String subjectMsgList = gson.toJson(questionnaire1);
+		return subjectMsgList;
+	}
+	//根据id搜索问卷
+	@RequestMapping(value = "/findQuestionaresById",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String findQuestionaresById(@RequestParam(value = "uId") int id) {
+		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
@@ -229,7 +257,7 @@ public class AndroidController {
 	@GetMapping("/prepreview/{id}")
 	public String prePreViewQuestionares(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
 		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
-		if(questionnaire.getAppearance().isEmpty()) {
+		if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
 			for(Question qu:questionnaire.getList()){
 	            for(int i=0;i<qu.getOptions().size();i++){
 	                if(qu.getOptions().get(i).getImgcontent() != null){
@@ -338,6 +366,17 @@ public class AndroidController {
 		String string = androidService.fixPsd(phone, psd);
 		return string.toString();
 	}
+	/*
+	 * 修改密码
+	 * 
+	 */
+	@RequestMapping(value = "/fixMsd",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String fixMsd(@RequestParam(value = "psd")String psd,@RequestParam(value = "nPsd")String nPsd,@RequestParam(value = "userId")String userId) {
+		int id = Integer.valueOf(userId);
+		String string = androidService.fixMsd(psd,nPsd,id);
+		return string.toString();
+	}
 	/**
 	 * 修改名字
 	 */
@@ -348,6 +387,27 @@ public class AndroidController {
 		String string = androidService.fixName(name,id);
 		return string.toString();
 	}
+	/**
+	 * 修改头像
+	 */
+	@RequestMapping(value = "/fixHead",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String fixHead(@RequestParam(value = "uri")String uri,@RequestParam(value = "userId")String userId) {
+		int id = Integer.valueOf(userId);
+		String string = androidService.fixHead(uri,id);
+		return string.toString();
+	}
+	/**
+	 * 修改手机号
+	 */
+	@RequestMapping(value = "/fixPhone",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String fixPhone(@RequestParam(value = "name")String phone,@RequestParam(value = "userId")String userId) {
+		int id = Integer.valueOf(userId);
+		String string = androidService.fixPhone(phone,id);
+		return string.toString();
+	}
+	
 	/**
 	 * 短信登录
 	 * 查找手机账号
@@ -364,6 +424,7 @@ public class AndroidController {
 			return "不存在用户".toString();
 		}
 	}
+	
 	/**
 	 * 查找用户信息
 	 */
@@ -437,7 +498,11 @@ public class AndroidController {
 	public String findQsByTitle(@RequestParam(value = "uId") int id,@RequestParam(value = "str")String str) {
 		List<Questionnaire> questionnaire = androidService.findQsByTitle(id,str);
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+		for(Questionnaire q : questionnaire) {
+			System.out.println("是否发布"+q.isIsRelease());
+		}
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
 	}
+	
 }

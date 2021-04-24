@@ -49,6 +49,7 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fix_phone);
+        initdata();
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
         getViews();
@@ -138,29 +139,41 @@ public class FixPhoneActivity extends AppCompatActivity implements View.OnClickL
                 });
                 break;
             case R.id.btn://修改设置
-                mobUtil2.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
-                    @Override
-                    public void onSuccess() {
-                        if(fixphone.getText().toString().equals("") || fixphone.getText().toString().isEmpty()){
-                            Toast.makeText(getApplicationContext(),"手机号不能为空",Toast.LENGTH_SHORT).show();
-                        }else {
-                            //去注册
-                            Toast.makeText(getApplicationContext(),"修改",Toast.LENGTH_SHORT).show();
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    uploadToDataBase(phoneNums,user.getId());
-                                }
-                            }).start();
+//                mobUtil2.submitVerrificationCode(MobUtil.CN, phoneNums, yanzhengma.getText().toString().trim(), new MobUtil.MobSendListener() {
+//                    @Override
+//                    public void onSuccess() {
+//                        if(fixphone.getText().toString().equals("") || fixphone.getText().toString().isEmpty()){
+//                            Toast.makeText(getApplicationContext(),"手机号不能为空",Toast.LENGTH_SHORT).show();
+//                        }else {
+//                            //去注册
+//                            Toast.makeText(getApplicationContext(),"修改",Toast.LENGTH_SHORT).show();
+//                            new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    uploadToDataBase(phoneNums,user.getId());
+//                                }
+//                            }).start();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onfail() {
+//                        Toast.makeText(getApplicationContext(), "验证码错误",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+                if(fixphone.getText().toString().equals("") || fixphone.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"手机号不能为空",Toast.LENGTH_SHORT).show();
+                }else {
+                    //去注册
+                    Toast.makeText(getApplicationContext(),"修改",Toast.LENGTH_SHORT).show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            uploadToDataBase(phoneNums,user.getId());
                         }
-                    }
-
-                    @Override
-                    public void onfail() {
-                        Toast.makeText(getApplicationContext(), "验证码错误",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    }).start();
+                }
                 break;
         }
     }

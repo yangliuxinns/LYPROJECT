@@ -15,6 +15,7 @@ import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.PreViewActivity;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.ReleaseActivity;
+import org.turings.investigationapplicqation.StatisticalResultsActivity;
 
 import java.util.List;
 //发布的问卷的Adapter
@@ -99,9 +100,9 @@ public class CustomPublishAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
 //                Log.i("www", "onClick:点击编辑事件 ");
-//                Intent intent = new Intent(context, EditQuestionnaire.class);
-//                intent.putExtra("questionnaire_data", list.get(listPosition));
-//                context.startActivity(intent);
+                Intent intent = new Intent(context, StatisticalResultsActivity.class);
+                intent.putExtra("id", list.get(listPosition));
+                context.startActivity(intent);
             }
         });
         holder.del.setOnClickListener(new View.OnClickListener() {

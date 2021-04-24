@@ -67,7 +67,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             if(msg.what == 1){
                 //注册
                 if(msg.obj.equals("修改成功")){
-                    mobUtil1.unregister();
+//                    mobUtil1.unregister();
                     Intent intent = new Intent(getApplicationContext(),FixYesActivity.class);
                     startActivity(intent);
                     finish();
@@ -112,7 +112,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     }
     public void initdata(){
         mobUtil1=MobUtil.getInstance();
-        //为按钮添加倒计时 可选
+//        //为按钮添加倒计时 可选
         mobUtil1.setCountDown(btn,30);
     };
 
@@ -153,7 +153,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         switch (view.getId()){
             case R.id.back:
                 //返回
-                mobUtil1.unregister();
+//                mobUtil1.unregister();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.setAction("work");
                 startActivity(intent);

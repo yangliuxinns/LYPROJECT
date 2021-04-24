@@ -65,4 +65,12 @@ public interface AndroidQuestionaresDao {
 	public int fixName(@Param("name")String name,@Param("id")int id);
 	//查找用户信息
 	public User findUserById(@Param("id")int parseInt);
+	//修改手机号
+	public int fixPhone(@Param("phone")String phone,@Param("id")int id);
+	//修改密码
+	public int fixMsd(@Param("psd")String psd,@Param("id")int id);
+	//修改头像
+	public int fixHead(@Param("uri")String uri,@Param("id")int id);
+	//搜索所有的回答
+	public List<Result> findResultByQuestionaireId(@Param("id")int id);
 }

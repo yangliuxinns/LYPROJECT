@@ -61,7 +61,7 @@ public class CustomDialogYLX extends DialogFragment {
                 //将信息存入数据库，并跳转到添加错题页
                 for(Question qu:questionnaire.getList()){
                     for(int i=0;i<qu.getOptions().size();i++){
-                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                        if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
                             String dataFileStr = getActivity().getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
                             Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
                             qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));

@@ -1,11 +1,15 @@
 package org.turings.investigationapplicqation;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import android.app.Dialog;
@@ -25,11 +29,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.turings.investigationapplicqation.DialogAdapter.CustomDrafDialog;
+import org.turings.investigationapplicqation.DialogAdapter.CustomPublishDialog;
 import org.turings.investigationapplicqation.DialogAdapter.CustomSearchResultListViewAdapter;
 import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
@@ -65,6 +72,18 @@ public class SearchResultActivity extends AppCompatActivity {
                 case 1://问卷部署
                     lists.clear();
                     lists.addAll(list);
+                    num.setText("符合搜索条件的项目 共"+lists.size()+"个");
+                    if(lists.size()>0){
+                        customSearchResultListViewAdapter.notifyDataSetChanged();
+                        ly.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                    }else {
+                        ly.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                    }
+                    break;
+                case 2:
+                    lists.remove(msg.obj);
                     num.setText("符合搜索条件的项目 共"+lists.size()+"个");
                     if(lists.size()>0){
                         customSearchResultListViewAdapter.notifyDataSetChanged();
@@ -139,7 +158,7 @@ public class SearchResultActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                show();
+                show(lists.get(position).isRelease(),position);
             }
         });
     }
@@ -181,11 +200,128 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     //自定义图片选择dialog
-    public void show(){
+    public void show(boolean release,int position){
         dialog = new Dialog(this,R.style.ActionSheetDialogStyle);
         //填充对话框的布局
         inflate = LayoutInflater.from(this).inflate(R.layout.custom_search_list_dialog, null);
         //初始化控件
+        //编辑
+        TextView edit = inflate.findViewById(R.id.edit);
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //判断是否发布
+                if(release){
+                    //已经发布
+                    showCustomDialog(lists.get(position));
+                }else {
+                    Intent intent = new Intent(getApplicationContext(), EditQuestionnaire.class);
+                    List<Question> qs = new ArrayList<>();
+                    for(Question qu:list.get(position).getList()){
+                        for(int i=0;i<qu.getOptions().size();i++){
+                            if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
+                                qu.getOptions().get(i).setImgcontent(null);
+                            }
+                        }
+                        qs.add(qu);
+                    }
+                    list.get(position).setList(qs);
+                    intent.putExtra("questionnaire_data", list.get(position));
+                    startActivity(intent);
+                }
+            }
+        });
+        //发布
+        TextView publish = inflate.findViewById(R.id.publish);
+        publish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //判断是否发布
+                if(release){
+                    //已经发布
+                    Toast.makeText(getApplicationContext(),"该问卷已经发布",Toast.LENGTH_SHORT).show();
+                }else {
+                    list.get(position).setRelease(true);
+                    lists.clear();
+                    customSearchResultListViewAdapter.notifyDataSetChanged();
+                    lists.addAll(list);
+                    customSearchResultListViewAdapter.notifyDataSetChanged();
+                    Intent inten = new Intent(getApplicationContext(), ReleaseActivity.class);
+                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+lists.get(position).getId());
+                    inten.putExtra("uId",list.get(position).getId()+"");
+                    startActivity(inten);
+                }
+            }
+        });
+        //删除
+        TextView del = inflate.findViewById(R.id.delete);
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //删除
+                list.get(position).setDel(true);
+                lists.clear();
+                customSearchResultListViewAdapter.notifyDataSetChanged();
+                lists.addAll(list);
+                customSearchResultListViewAdapter.notifyDataSetChanged();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteToDataBase(lists.get(position),position);
+                    }
+                }).start();
+            }
+        });
+        //预览
+        TextView pre = inflate.findViewById(R.id.preview);
+        pre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent3 = new Intent(getApplicationContext(), PreViewActivity.class);
+                intent3.putExtra("q_data", lists.get(position));
+                startActivity(intent3);
+            }
+        });
+        //分享
+        TextView share = inflate.findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //先发布再分享
+                //判断是否发布
+                if(release){
+                    //已经发布
+                    Intent inten = new Intent(getApplicationContext(), ReleaseActivity.class);
+                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+list.get(position).getId());
+                    inten.putExtra("uId",list.get(position).getId()+"");
+                    startActivity(inten);
+                }else {
+                    //请先发布才能分享
+                    //问卷还没有发布是否发布
+                    list.get(position).setRelease(true);
+                    lists.clear();
+                    customSearchResultListViewAdapter.notifyDataSetChanged();
+                    lists.addAll(list);
+                    customSearchResultListViewAdapter.notifyDataSetChanged();
+                    showPublishCustomDialog(lists.get(position));
+                }
+            }
+        });
+        //统计
+        TextView count = inflate.findViewById(R.id.count);
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(release){
+                    Intent intent = new Intent(getApplicationContext(), StatisticalResultsActivity.class);
+                    intent.putExtra("id", list.get(position));
+                    startActivity(intent);
+                }else {
+                    //已经发布
+                    Toast.makeText(getApplicationContext(),"问卷未发布，暂无数据",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 //        choosePhoto = (TextView) inflate.findViewById(R.id.choosePhoto);
 //        takePhoto = (TextView) inflate.findViewById(R.id.takePhoto);
 //        canel = inflate.findViewById(R.id.canel);
@@ -217,11 +353,80 @@ public class SearchResultActivity extends AppCompatActivity {
 //                takePhoto();
 //            }
 //        });
-//        canel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dialog.dismiss();
-//            }
-//        });
+        TextView cancel = inflate.findViewById(R.id.canel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showCustomDialog(Questionnaire questionnaire) {
+        //管理多个Fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        //事务（一系列原子性操作）
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        CustomDrafDialog customDialog = new CustomDrafDialog();
+        //是否添加过
+        if(!customDialog.isAdded()){
+            //没添加过添加
+            transaction.add(customDialog,"dialog");
+        }
+        //传入要上传的数据
+        customDialog.setMsgData(questionnaire);
+        //显示Fragment
+        transaction.show(customDialog);
+        //提交，只有提交了上面的操作才会生效
+        transaction.commit();
+    }
+
+    //发布问卷
+    private void showPublishCustomDialog(Questionnaire questionnaire) {
+        //管理多个Fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        //事务（一系列原子性操作）
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        CustomPublishDialog customDialog = new CustomPublishDialog();
+        //是否添加过
+        if(!customDialog.isAdded()){
+            //没添加过添加
+            transaction.add(customDialog,"dialog");
+        }
+        //传入要上传的数据
+        customDialog.setMsgData(questionnaire);
+        //显示Fragment
+        transaction.show(customDialog);
+        //提交，只有提交了上面的操作才会生效
+        transaction.commit();
+    }
+    private void deleteToDataBase(Questionnaire questionnaire, int position) {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+        String subject = gson.toJson(questionnaire);
+        okHttpClient = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain;charset=utf-8"),subject);
+        String url = "http://" + getResources().getString(R.string.ipConfig) + ":8080/WorkProject/ylx/updateQuestionaresDelete";
+        Request request = new Request.Builder().post(requestBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Message msg = Message.obtain();
+                        msg.obj = position;
+                        msg.what=2;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }).start();
     }
 }

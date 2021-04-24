@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.Fragment.DetailedDataFragment;
 import org.turings.investigationapplicqation.Fragment.DraftsFragment;
 import org.turings.investigationapplicqation.Fragment.PublishedFragment;
@@ -42,6 +43,8 @@ public class StatisticalResultsActivity extends AppCompatActivity implements Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistical_results);
+        back = findViewById(R.id.back);
+        back.setOnClickListener(this);
         initView();
         initImg();
     }
@@ -81,6 +84,8 @@ public class StatisticalResultsActivity extends AppCompatActivity implements Vie
 
     // 初始化控件
     private void initView() {
+        Intent intent = getIntent();
+        Questionnaire id = (Questionnaire) intent.getSerializableExtra("id");
         LinearLayout noticeLayout = findViewById(R.id.layout_notice1);
         noticeLayout.setOnClickListener(this);
         LinearLayout findLayout = findViewById(R.id.layout_find1);
@@ -93,8 +98,8 @@ public class StatisticalResultsActivity extends AppCompatActivity implements Vie
         viewPager = findViewById(R.id.viewpager);
 
         mDatas = new ArrayList<>();
-        SummaryFragment tab01 = SummaryFragment.newInstance("标题A");
-        DetailedDataFragment tab02 = DetailedDataFragment.newInstance("标题B");
+        SummaryFragment tab01 = SummaryFragment.newInstance(id);
+        DetailedDataFragment tab02 = DetailedDataFragment.newInstance(id);
         mDatas.add(tab01);
         mDatas.add(tab02);
 
@@ -164,6 +169,9 @@ public class StatisticalResultsActivity extends AppCompatActivity implements Vie
                 break;
             case R.id.layout_find1:// 详细数据
                 viewPager.setCurrentItem(1);
+                break;
+            case R.id.back:
+                finish();
                 break;
         }
     }
