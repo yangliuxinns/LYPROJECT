@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -206,17 +207,17 @@ public class AndroidController {
 		}
 	}
 	//发布问卷，改变问卷状态
-		@RequestMapping(value = "/fixQuestionaresDraf",produces="text/json;charset=utf-8")
-		@ResponseBody
-		public String fixQuestionaresDraf(@RequestParam(value = "uId") int id) {
-			
-			int n = androidService.fixQuestionaresDraf(id);
-			if(n>0) {
-				return "更改成功".toString();
-			}else {
-				return "更改失败".toString();
-			}
+	@RequestMapping(value = "/fixQuestionaresDraf",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String fixQuestionaresDraf(@RequestParam(value = "uId") int id) {
+		
+		int n = androidService.fixQuestionaresDraf(id);
+		if(n>0) {
+			return "更改成功".toString();
+		}else {
+			return "更改失败".toString();
 		}
+	}
 	//根据id搜索发布的问卷
 	@RequestMapping(value = "/findQuestionaresByUserIdPublish",produces="text/json;charset=utf-8")
 	@ResponseBody
@@ -304,6 +305,121 @@ public class AndroidController {
         }
 		modelMap.addAttribute("questionnaire",questionnaire);
 		return "androidPreView";
+	}
+	//回答问卷之前
+	@GetMapping("/preInvestigation/{id}")
+	public String preInvestigation(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
+		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		//问卷先看设置
+		//是否在回答时间
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+		Date now = null;
+		Date beginTime = null;
+		Date endTime = null;
+		try {
+			now = new Date();
+			beginTime = questionnaire.getStartTime();
+			endTime = questionnaire.getEndTime();
+			System.out.print("当前时间"+now+"开始"+beginTime+"结束"+endTime);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(beginTime == null) {
+			//直接访问
+			//是否有浏览器限制
+			if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
+				for(Question qu:questionnaire.getList()){
+		            for(int i=0;i<qu.getOptions().size();i++){
+		                if(qu.getOptions().get(i).getImgcontent() != null){
+		                    OutputStream os;
+							try {
+								os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+								 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+				                 os.flush();
+				                 os.close(); 
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+		                }
+		            }
+		        }
+				modelMap.addAttribute("questionnaire",questionnaire);
+				return "Investigation";
+			}else {
+				//只传递id
+				modelMap.addAttribute("questionnaire",questionnaire);
+				return "openPage";
+			}
+		}else {
+			if(endTime == null) {
+				try {
+					endTime = df.parse("2100-10-01 22:00");
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			Boolean flag = belongCalendar(now, beginTime, endTime);
+			if(flag) {
+				//在时间内
+				System.out.println("在时间内");
+				//是否有浏览器限制
+				if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
+					for(Question qu:questionnaire.getList()){
+			            for(int i=0;i<qu.getOptions().size();i++){
+			                if(qu.getOptions().get(i).getImgcontent() != null){
+			                    OutputStream os;
+								try {
+									os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+									 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+					                 os.flush();
+					                 os.close(); 
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+			                }
+			            }
+			        }
+					modelMap.addAttribute("questionnaire",questionnaire);
+					return "Investigation";
+				}else {
+					//只传递id
+					modelMap.addAttribute("questionnaire",questionnaire);
+					return "openPage";
+				}
+			}else {
+				//不在直接跳转
+				System.out.println("不在时间内");
+				return "NoSee";
+			}
+		}
+			
+		
+	}
+		//回答问卷
+	@GetMapping("/investigation/{id}")
+	public String investigation(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
+		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		for(Question qu:questionnaire.getList()){
+            for(int i=0;i<qu.getOptions().size();i++){
+                if(qu.getOptions().get(i).getImgcontent() != null){
+                    OutputStream os;
+					try {
+						os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+						 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+		                 os.flush();
+		                 os.close(); 
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                }
+            }
+        }
+		modelMap.addAttribute("questionnaire",questionnaire);
+		return "Investigation";
 	}
 	//获取图片
 	@RequestMapping(value = "/seekExperts",produces="text/json;charset=utf-8")
@@ -504,5 +620,28 @@ public class AndroidController {
 		String subjectMsgList = gson.toJson(questionnaire);
 		return subjectMsgList;
 	}
-	
+
+	/**
+	 * 判断时间是否在时间段内
+	 * 
+	 * @param nowTime
+	 * @param beginTime
+	 * @param endTime
+	 * @return
+	 */
+	public static boolean belongCalendar(Date nowTime, Date beginTime, Date endTime) {
+		Calendar date = Calendar.getInstance();
+		date.setTime(nowTime);
+		Calendar begin = Calendar.getInstance();
+		begin.setTime(beginTime);
+		Calendar end = Calendar.getInstance();
+		end.setTime(endTime);
+		if (date.after(begin) && date.before(end)) {
+			return true;
+		} else if (nowTime.compareTo(beginTime) == 0 || nowTime.compareTo(endTime) == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

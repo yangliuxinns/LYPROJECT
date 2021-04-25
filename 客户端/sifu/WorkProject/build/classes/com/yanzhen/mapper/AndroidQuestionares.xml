@@ -6,6 +6,7 @@
 		    <result property="title" column="title"/>
 		    <result property="instructions" column="instruction"/>
 		    <result property="startTime" column="start_time"/>
+		    <result property="endTime" column="end_time"/>
 		    <result property="IsRelease" column="issued"/>
 		    <result property="appearance" column="img"/>
 		    <result property="user_id" column="user_id"/>

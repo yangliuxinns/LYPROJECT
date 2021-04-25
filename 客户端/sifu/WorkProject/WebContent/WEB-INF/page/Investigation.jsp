@@ -8,9 +8,19 @@
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
-<title>预览</title>
+<title>在线填写</title>
 <link rel="stylesheet" href="../../static/style.css">
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=xWfzGbIe2LFNjHNtjmsCBsB56UExdabO"></script>
+<script>
+		 <c:if test="${questionnaire.onlyWeixin}">
+		 	var useragent = navigator.userAgent;
+		    if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+		        // 这里警告框会阻塞当前页面继续加载
+		        // 以下代码是用javascript强行关闭当前页面
+		        document.body.innerHTML = '请使用微信客户端打开';	
+		    }		   
+		 </c:if>
+</script>
 </head>
 <body>
 <div style="display: flex;justify-content: center;">
@@ -608,7 +618,8 @@
 		</c:forEach>
 		var ui =document.getElementById('form1');
 		if(flag == 0){
-			alert('此为预览界面，不能提交');
+			ui.action = "http://192.168.10.223:8080/WorkProject/ylx/saveInfo/${questionnaire.id}";
+			ui.submit();
 		} 
 	} 
 </script>
