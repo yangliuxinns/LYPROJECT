@@ -19,13 +19,14 @@ public class Questionnaire{
     private Date endTime;//结束时间
     private int user_id;//用户id
     private Boolean isDel;//是否删除
+    private String imgColor;//颜色
     public Questionnaire() {
     }
 
     
     public Questionnaire(int id, String title, String instructions, boolean isRelease, List<Question> list,
 			int totalPage, Boolean onlyPhone, Boolean onlyWeixin, Boolean isRecordWeixinInfo, String appearance,
-			Date startTime, Date endTime, int user_id,Boolean isDel) {
+			Date startTime, Date endTime, int user_id,Boolean isDel,String imgColor) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -41,6 +42,7 @@ public class Questionnaire{
 		this.endTime = endTime;
 		this.user_id = user_id;
 		this.isDel = isDel;
+		this.imgColor = imgColor;
 	}
 
 
@@ -211,6 +213,15 @@ public class Questionnaire{
 	}
 
 
+	public String getImgColor() {
+		return imgColor;
+	}
+
+
+	public void setImgColor(String imgColor) {
+		this.imgColor = imgColor;
+	}
+
 	@Override
 	public String toString() {
 		return "Questionnaire [id=" + id + ", title=" + title + ", instructions=" + instructions + ", IsRelease="
@@ -218,6 +229,8 @@ public class Questionnaire{
 				+ ", onlyWeixin=" + onlyWeixin + ", isRecordWeixinInfo=" + isRecordWeixinInfo + ", appearance="
 				+ appearance + ", startTime=" + startTime + ", endTime=" + endTime + "]";
 	}
+
+
     
     
     

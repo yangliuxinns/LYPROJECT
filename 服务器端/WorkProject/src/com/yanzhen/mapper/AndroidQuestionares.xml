@@ -14,6 +14,7 @@
 		    <result property="isRecordWeixinInfo" column="isRecordWeixinInfo"/>
 		    <result property="totalPage" column="totalPage"/>
 		    <result property="isDel" column="isDel"/>
+		    <result property="imgColor" column="img_color"/>
 		    <collection property="list" ofType="com.yanzhen.entityylx.Question" column="uid=id"
 		    		select="com.yanzhen.mapper.AndroidQuestionMapper.findQuestionById">
             </collection>
@@ -21,8 +22,8 @@
 		
 	<!--增加问卷  -->
 	<insert id="insertQuestionare" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Questionnaire">
-    	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel) 
-    	values(#{title},#{instructions},#{startTime},#{endTime},#{IsRelease},#{appearance},#{user_id},#{onlyPhone},#{onlyWeixin},#{isRecordWeixinInfo},#{totalPage},#{isDel}) 
+    	insert into questionnaire_tb(title,instruction,start_time,end_time,issued,img,user_id,onlyPhone,onlyWeixin,isRecordWeixinInfo,totalPage,isDel,img_color) 
+    	values(#{title},#{instructions},#{startTime},#{endTime},#{IsRelease},#{appearance},#{user_id},#{onlyPhone},#{onlyWeixin},#{isRecordWeixinInfo},#{totalPage},#{isDel},#{imgColor}) 
 	</insert> 
 	
 	<!--题库加入题目  -->
@@ -33,7 +34,7 @@
 	
 	<!--选择题增加选项  -->
 	<insert id="insertOptions">
-    	insert into question_options_tb(order_index,content,qw_id,imgver) values(#{order1},#{content1},#{qId1},#{img1}) 
+    	insert into question_options_tb(order_index,content,qw_id,imgver,img) values(#{order1},#{content1},#{qId1},#{img1},#{imgcontent}) 
 	</insert> 
 	<!--题目加入关联表  -->
 	<insert id="insertAssociation">
@@ -53,6 +54,10 @@
 	<!-- 根据id搜索问卷发布箱子 -->
 	<select id="findQuestionareByUserIdPublish" resultMap="questionnairerMap">
 		select * from questionnaire_tb where user_id = #{uid} and issued = true and isDel = false;
+	</select>
+	<!-- 根据id和条件搜索问卷 -->
+	<select id="findQsByTitle" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{id} and title like concat('%',#{title},'%');
 	</select>
 	<select id="findQuestionaresByUserIdAndTitle" resultMap="questionnairerMap">
 		select * from questionnaire_tb where user_id = #{id} and title like "%"#{title}"%"
@@ -75,7 +80,8 @@
 	   		 onlyWeixin = #{onlyWeixin},
 	   		 isRecordWeixinInfo = #{isRecordWeixinInfo},
 	   		 totalPage = #{totalPage},
-	   		 isDel = #{isDel}
+	   		 isDel = #{isDel},
+	   		 img_color = #{imgColor}
 	    where id = #{id}
 	</update>
 	<!--更新问卷 删除 -->
@@ -84,5 +90,84 @@
 	    set isDel = #{isDel}
 	    where id = #{id}
 	</update>
+	<select id="findUserByPhone" resultType="com.yanzhen.entityylx.User">
+		select * from user_tb where phone = #{phone}
+	</select>
+	<!--注册  -->
+	<insert id="saveUser">
+    	insert into user_tb(phone,password) 
+    	values(#{phone},#{psd}) 
+	</insert> 
 	
+	<select id="findUser" resultType="com.yanzhen.entityylx.User">
+		select * from user_tb where phone = #{phone} and password = #{psd}
+	</select>
+	
+	<!-- 存储问卷答案 -->
+	<insert id="saveAnswer" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Result">
+    	insert into results_questionnaire_tb(questionnatre_id,time) 
+    	values(#{questionnatre_id},#{time}) 
+	</insert> 
+	<!--存储问卷细节 -->
+	<insert id="saveResult" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.ResultInfo">
+    	insert into detail_result(question_number,order_number,result,user_id) 
+    	values(#{question_number},#{order_number},#{result},#{user_id}) 
+	</insert> 
+	<!-- 忘记密码修改 -->
+	<update id="fixPsd">
+	    update user_tb 
+	    set password = #{psd}
+	    where id = #{id}
+	</update>
+	<!--更新问卷 发布 -->
+	<update id="fixQuestionaresRelease">
+	    update questionnaire_tb 
+	    set issued = true
+	    where id = #{id}
+	</update>
+	<!--更新问卷草稿 -->
+	<update id="fixQuestionaresDraf">
+	    update questionnaire_tb 
+	    set issued = false
+	    where id = #{id}
+	</update>
+	<!-- 根据id搜索问卷回收站 -->
+	<select id="findQuestionaresByUserIdDelete" resultMap="questionnairerMap">
+		select * from questionnaire_tb where user_id = #{uid} and isDel = true;
+	</select>
+	<!--批量恢复  -->
+	<delete id="revertQuestionaire">
+		update questionnaire_tb 
+	    set issued = false,isDel = false
+	    where id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--彻底删除问卷  -->
+	<delete id="deleteQuestionaire">
+		delete from questionnaire_tb where id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--彻底删除问卷关联表  -->
+	<delete id="deleteQuestionaireAndQuestion">
+		delete from questionnaire_questuion_tb where questionnaire_id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--修改名字-->
+	<update id="fixName">
+	    update user_tb 
+	    set user_name = #{name}
+	    where id = #{id}
+	</update>
+	<select id="findUserById" resultType="com.yanzhen.entityylx.User">
+		select * from user_tb where id = #{id}
+	</select>
 </mapper>
