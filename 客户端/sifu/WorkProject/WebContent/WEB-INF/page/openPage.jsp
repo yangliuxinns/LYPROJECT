@@ -15,6 +15,7 @@
 		</div>
 		<div style="width: 100%;text-align:center;vertical-align:middle; position:fixed;bottom:20px;z-index: 9999;">
 			<form style="width: auto;" action="http://192.168.10.223:8080/WorkProject/ylx/investigation/${questionnaire.id }" method="get">
+				<input type="hidden" name="ip" value="${ip}">
 				<input align="center" style="width:60% ;height:80px; background-color:${questionnaire.imgColor};border:none;color: #FFF;font-size:30px;text-align: center;" type="submit" value="开启问卷">
 			</form>
 		</div>

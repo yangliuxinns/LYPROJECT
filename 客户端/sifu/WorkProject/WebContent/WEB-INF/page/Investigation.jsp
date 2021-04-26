@@ -144,6 +144,7 @@
 					</div>			
 			</c:if>
           </c:forEach>
+          <input name="ip" value="${ip}" type="text">
           <div style="display: flex;justify-content: center;">
           		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
           </div>

@@ -114,8 +114,8 @@
 	
 	<!-- 存储问卷答案 -->
 	<insert id="saveAnswer" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.Result">
-    	insert into results_questionnaire_tb(questionnatre_id,time) 
-    	values(#{questionnatre_id},#{time}) 
+    	insert into results_questionnaire_tb(questionnatre_id,time,ip) 
+    	values(#{questionnatre_id},#{time},#{ip}) 
 	</insert> 
 	<!--存储问卷细节 -->
 	<insert id="saveResult" useGeneratedKeys="true" keyProperty="id" parameterType="com.yanzhen.entityylx.ResultInfo">
@@ -201,5 +201,9 @@
 	<!-- 根据id搜索问卷 -->
 	<select id="findResultByQuestionaireId" resultMap="resultMap">
 		select * from results_questionnaire_tb where questionnatre_id = #{id}
+	</select>
+	<!--搜所ip  -->
+	<select id="findIp" resultMap="resultMap">
+		select * from results_questionnaire_tb where questionnatre_id = #{id} and ip = #{remoteAddr}
 	</select>
 </mapper>

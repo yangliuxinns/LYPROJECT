@@ -277,4 +277,9 @@ public class AndroidService {
 		List<Result> results = androidQuestionaresDao.findResultByQuestionaireId(id);
 		return results;
 	}
+
+	//搜索是否访问过
+	public Result findIp(String remoteAddr, int i) {
+		return androidQuestionaresDao.findIp(remoteAddr,i);
+	}
 }

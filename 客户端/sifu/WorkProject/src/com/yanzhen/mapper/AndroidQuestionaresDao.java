@@ -73,4 +73,6 @@ public interface AndroidQuestionaresDao {
 	public int fixHead(@Param("uri")String uri,@Param("id")int id);
 	//搜索所有的回答
 	public List<Result> findResultByQuestionaireId(@Param("id")int id);
+	//找ip
+	public Result findIp(@Param("remoteAddr")String remoteAddr,@Param("id")int i);
 }

@@ -140,8 +140,9 @@ public class AndroidController {
 		result.setQuestionnatre_id(id);
 		Date dd=new Date();
 		result.setTime(dd);
+		String ip = request.getParameter("ip");
 		//记得ip
-		result.setIp("");
+		result.setIp(ip);
 		result.setResults(list);
 		int k = androidService.saveAnswer(result);
 		if(k>0) {
@@ -310,60 +311,130 @@ public class AndroidController {
 	@GetMapping("/preInvestigation/{id}")
 	public String preInvestigation(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
 		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		//获取ip
+		String remoteAddr = "";
+        if (request != null) {
+            remoteAddr = request.getHeader("X-FORWARDED-FOR");
+            if (remoteAddr == null || "".equals(remoteAddr)) {
+                remoteAddr = request.getRemoteAddr();
+            }
+        }
+        //搜索
 		//问卷先看设置
-		//是否在回答时间
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
-		Date now = null;
-		Date beginTime = null;
-		Date endTime = null;
-		try {
-			now = new Date();
-			beginTime = questionnaire.getStartTime();
-			endTime = questionnaire.getEndTime();
-			System.out.print("当前时间"+now+"开始"+beginTime+"结束"+endTime);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if(beginTime == null) {
-			//直接访问
-			//是否有浏览器限制
-			if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
-				for(Question qu:questionnaire.getList()){
-		            for(int i=0;i<qu.getOptions().size();i++){
-		                if(qu.getOptions().get(i).getImgcontent() != null){
-		                    OutputStream os;
-							try {
-								os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
-								 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
-				                 os.flush();
-				                 os.close(); 
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-		                }
-		            }
-		        }
-				modelMap.addAttribute("questionnaire",questionnaire);
-				return "Investigation";
-			}else {
-				//只传递id
-				modelMap.addAttribute("questionnaire",questionnaire);
-				return "openPage";
-			}
+		if(questionnaire.getOnlyPhone()) {
+			//每个手机只能访问一次
+		
+	        Result list = androidService.findIp(remoteAddr,questionnaire.getId());
+	        if(list == null) {
+	        	//不重复可以访问
+	        	//是否在回答时间
+	    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+	    		Date now = null;
+	    		Date beginTime = null;
+	    		Date endTime = null;
+	    		try {
+	    			now = new Date();
+	    			beginTime = questionnaire.getStartTime();
+	    			endTime = questionnaire.getEndTime();
+	    			System.out.print("当前时间"+now+"开始"+beginTime+"结束"+endTime);
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+	    		if(beginTime == null) {
+	    			//直接访问
+	    			//是否有浏览器限制
+	    			if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
+	    				for(Question qu:questionnaire.getList()){
+	    		            for(int i=0;i<qu.getOptions().size();i++){
+	    		                if(qu.getOptions().get(i).getImgcontent() != null){
+	    		                    OutputStream os;
+	    							try {
+	    								os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+	    								 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+	    				                 os.flush();
+	    				                 os.close(); 
+	    							} catch (IOException e) {
+	    								// TODO Auto-generated catch block
+	    								e.printStackTrace();
+	    							}
+	    		                }
+	    		            }
+	    		        }
+	    				modelMap.addAttribute("questionnaire",questionnaire);
+	    				modelMap.addAttribute("ip",remoteAddr);
+	    				return "Investigation";
+	    			}else {
+	    				//只传递id
+	    				modelMap.addAttribute("questionnaire",questionnaire);
+	    				modelMap.addAttribute("ip",remoteAddr);
+	    				return "openPage";
+	    			}
+	    		}else {
+	    			if(endTime == null) {
+	    				try {
+	    					endTime = df.parse("2100-10-01 22:00");
+	    				} catch (ParseException e) {
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+	    			}
+	    			Boolean flag = belongCalendar(now, beginTime, endTime);
+	    			if(flag) {
+	    				//在时间内
+	    				System.out.println("在时间内");
+	    				//是否有浏览器限制
+	    				if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
+	    					for(Question qu:questionnaire.getList()){
+	    			            for(int i=0;i<qu.getOptions().size();i++){
+	    			                if(qu.getOptions().get(i).getImgcontent() != null){
+	    			                    OutputStream os;
+	    								try {
+	    									os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+	    									 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+	    					                 os.flush();
+	    					                 os.close(); 
+	    								} catch (IOException e) {
+	    									// TODO Auto-generated catch block
+	    									e.printStackTrace();
+	    								}
+	    			                }
+	    			            }
+	    			        }
+	    					modelMap.addAttribute("questionnaire",questionnaire);
+	    					modelMap.addAttribute("ip",remoteAddr);
+	    					return "Investigation";
+	    				}else {
+	    					//只传递id
+	    					modelMap.addAttribute("questionnaire",questionnaire);
+	    					modelMap.addAttribute("ip",remoteAddr);
+	    					return "openPage";
+	    				}
+	    			}else {
+	    				//不在直接跳转
+	    				System.out.println("不在时间内");
+	    				return "NoSee";
+	    			}
+	    		}
+	        }else {
+	        	//不能访问
+	        	return "StopSee";
+	        }
 		}else {
-			if(endTime == null) {
-				try {
-					endTime = df.parse("2100-10-01 22:00");
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			//是否在回答时间
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
+			Date now = null;
+			Date beginTime = null;
+			Date endTime = null;
+			try {
+				now = new Date();
+				beginTime = questionnaire.getStartTime();
+				endTime = questionnaire.getEndTime();
+				System.out.print("当前时间"+now+"开始"+beginTime+"结束"+endTime);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			Boolean flag = belongCalendar(now, beginTime, endTime);
-			if(flag) {
-				//在时间内
-				System.out.println("在时间内");
+			if(beginTime == null) {
+				//直接访问
 				//是否有浏览器限制
 				if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
 					for(Question qu:questionnaire.getList()){
@@ -383,19 +454,61 @@ public class AndroidController {
 			            }
 			        }
 					modelMap.addAttribute("questionnaire",questionnaire);
+					modelMap.addAttribute("ip",remoteAddr);
 					return "Investigation";
 				}else {
 					//只传递id
 					modelMap.addAttribute("questionnaire",questionnaire);
+					modelMap.addAttribute("ip",remoteAddr);
 					return "openPage";
 				}
 			}else {
-				//不在直接跳转
-				System.out.println("不在时间内");
-				return "NoSee";
+				if(endTime == null) {
+					try {
+						endTime = df.parse("2100-10-01 22:00");
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				Boolean flag = belongCalendar(now, beginTime, endTime);
+				if(flag) {
+					//在时间内
+					System.out.println("在时间内");
+					//是否有浏览器限制
+					if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
+						for(Question qu:questionnaire.getList()){
+				            for(int i=0;i<qu.getOptions().size();i++){
+				                if(qu.getOptions().get(i).getImgcontent() != null){
+				                    OutputStream os;
+									try {
+										os = new FileOutputStream("F://proImg/"+qu.getOptions().get(i).getId()+questionnaire.getId()+".jpeg");
+										 os.write(qu.getOptions().get(i).getImgcontent(),0,qu.getOptions().get(i).getImgcontent().length);
+						                 os.flush();
+						                 os.close(); 
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+				                }
+				            }
+				        }
+						modelMap.addAttribute("questionnaire",questionnaire);
+						modelMap.addAttribute("ip",remoteAddr);
+						return "Investigation";
+					}else {
+						//只传递id
+						modelMap.addAttribute("questionnaire",questionnaire);
+						modelMap.addAttribute("ip",remoteAddr);
+						return "openPage";
+					}
+				}else {
+					//不在直接跳转
+					System.out.println("不在时间内");
+					return "NoSee";
+				}
 			}
-		}
-			
+		}	
 		
 	}
 		//回答问卷
@@ -419,6 +532,7 @@ public class AndroidController {
             }
         }
 		modelMap.addAttribute("questionnaire",questionnaire);
+		modelMap.addAttribute("ip",request.getParameter("ip"));
 		return "Investigation";
 	}
 	//获取图片
