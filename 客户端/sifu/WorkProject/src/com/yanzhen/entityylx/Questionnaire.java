@@ -225,7 +225,7 @@ public class Questionnaire{
 	@Override
 	public String toString() {
 		return "Questionnaire [id=" + id + ", title=" + title + ", instructions=" + instructions + ", IsRelease="
-				+ IsRelease + ", list=" + list + ", totalPage=" + totalPage + ", onlyPhone=" + onlyPhone
+				+ IsRelease + ", list=" + list.toString() + ", totalPage=" + totalPage + ", onlyPhone=" + onlyPhone
 				+ ", onlyWeixin=" + onlyWeixin + ", isRecordWeixinInfo=" + isRecordWeixinInfo + ", appearance="
 				+ appearance + ", startTime=" + startTime + ", endTime=" + endTime + "]";
 	}

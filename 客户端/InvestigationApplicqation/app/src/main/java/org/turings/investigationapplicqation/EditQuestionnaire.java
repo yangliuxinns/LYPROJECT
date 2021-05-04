@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -273,6 +274,15 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
     //初始化
     private void init() {
         questionnaire = (Questionnaire) getIntent().getSerializableExtra("questionnaire_data");
+        if(questionnaire.getList()!=null){
+            if(questionnaire.getList().size()!=0) {
+                for (Question q : questionnaire.getList()) {
+                    if (!q.getType().equals("分页")) {
+                        order++;
+                    }
+                }
+            }
+        }
         tvTitle.setText(questionnaire.getTitle());
         tvContent.setText(questionnaire.getInstructions());
         if(questionnaire.getId() != 0){
@@ -333,12 +343,22 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.preview://点击预览
                 for(Question qu:questionnaire.getList()){
-                    for(int i=0;i<qu.getOptions().size();i++){
-                        if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
-                            String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
-                            Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
-                            qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                    if(qu.getOptions() != null){
+                        for(int i=0;i<qu.getOptions().size();i++){
+                            if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
+                                String dataFileStr = getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                                Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                                qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                            }
                         }
+                    }
+                }
+                //保存之前删除分页
+                Iterator<Question> iterator = questionnaire.getList().iterator();
+                while (iterator.hasNext()) {
+                    Question value = iterator.next();
+                    if (value.getType().equals("分页")) {
+                        iterator.remove();
                     }
                 }
                 //先保存
@@ -456,6 +476,7 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                         }
                     }else if(questionnaire.getTotalPage() >= 2){
                         //尾部加一个分页
+                        total = questionnaire.getTotalPage();
                         total++;
                         question.setPageNumber(total);
                         question.setOrder(order);
@@ -463,8 +484,9 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                     }
                     questionnaire.setTotalPage(total);
                 }else {
+                    order++;
                     question.setPageNumber(total);
-                    question.setOrder(lq.size()+1);
+                    question.setOrder(order);
                     lq.add(question);
                 }
                 questionnaire.setList(lq);
@@ -505,7 +527,6 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 List<Question> qs = (List<Question>) data.getSerializableExtra("qs");
                 order = lq.size();
                 for(Question question1 : qs){
-                    Log.i("bb", "onActivityResult:批量添加 "+question1.toString());
                     order++;
                     question1.setPageNumber(total);
                     question1.setOrder(order);

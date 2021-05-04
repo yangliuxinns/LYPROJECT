@@ -135,7 +135,7 @@ public class LoginAndRegisterActivity extends AppCompatActivity implements View.
                     SharedPreferences sharedPreferences=getSharedPreferences("userInfo",MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     editor.putString("phone",user.getPhone());
-                    editor.putString("uId",Integer.toBinaryString(user.getId()));
+                    editor.putString("uId", String.valueOf(user.getId()));
                     editor.commit();
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.setAction("work");

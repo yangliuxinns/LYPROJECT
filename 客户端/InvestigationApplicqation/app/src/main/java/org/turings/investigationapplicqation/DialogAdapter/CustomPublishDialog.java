@@ -1,6 +1,8 @@
 package org.turings.investigationapplicqation.DialogAdapter;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +25,10 @@ import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
 import org.turings.investigationapplicqation.ReleaseActivity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,7 +60,7 @@ public class CustomPublishDialog extends DialogFragment {
                     }else {
                         //发布问卷
                         Intent inten = new Intent(getActivity(), ReleaseActivity.class);
-                        inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+questionnaire.getId());
+                        inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+questionnaire.getId());
                         inten.putExtra("uId",questionnaire.getId()+"");
                         startActivity(inten);
                         getActivity().finish();
@@ -73,6 +78,25 @@ public class CustomPublishDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 //点击确定跳转发布
+                for(Question qu:questionnaire.getList()){
+                    if(qu.getOptions() != null){
+                        for(int i=0;i<qu.getOptions().size();i++){
+                            if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
+                                String dataFileStr = getActivity().getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                                Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                                qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                            }
+                        }
+                    }
+                }
+                //保存之前删除分页
+                Iterator<Question> iterator = questionnaire.getList().iterator();
+                while (iterator.hasNext()) {
+                    Question value = iterator.next();
+                    if (value.getType().equals("分页")) {
+                        iterator.remove();
+                    }
+                }
                 //先保存
                 new Thread(new Runnable() {
                     @Override
@@ -152,5 +176,31 @@ public class CustomPublishDialog extends DialogFragment {
                 });
             }
         }).start();
+    }
+    public byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 压缩图片
+     * 该方法引用自：http://blog.csdn.net/demonliuhui/article/details/52949203
+     *
+     * @param image
+     * @return
+     */
+    public  Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
     }
 }

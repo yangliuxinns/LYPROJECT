@@ -10,7 +10,7 @@ public class Question {
 	    private String type;//题型
 	    private List<Options> options;//选项
 	    private Boolean isRequired;//是否必填
-	    private int pageNumber;//分页
+	    private int PageNumber;//分页
 
 	    public Question() {
 	    }
@@ -22,7 +22,7 @@ public class Question {
 	        this.type = type;
 	        this.options = options;
 	        this.isRequired = isRequired;
-	        pageNumber = pageNumber;
+	        this.PageNumber = pageNumber;
 	    }
 
 	    public int getId() {
@@ -83,13 +83,16 @@ public class Question {
 			this.isRequired = isRequired;
 		}
 
-		public int getPageNumber() {
-			return pageNumber;
-		}
+		
 
-		public void setPageNumber(int pageNumber) {
-			this.pageNumber = pageNumber;
-		}
+		public int getPageNumber() {
+	        return PageNumber;
+	    }
+
+	    public void setPageNumber(int pageNumber) {
+	        PageNumber = pageNumber;
+	    }
+
 
 		@Override
 	    public String toString() {
@@ -100,7 +103,7 @@ public class Question {
 	                ", type='" + type + '\'' +
 	                ", options=" + options.toString() +
 	                ", isRequired=" + isRequired +
-	                ", PageNumber=" + pageNumber +
+	                ", PageNumber=" + PageNumber +
 	                '}';
 	    }
 }

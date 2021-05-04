@@ -26,6 +26,10 @@ import com.linchaolong.android.imagepicker.cropper.CropImage;
 import com.linchaolong.android.imagepicker.cropper.CropImageView;
 
 import org.turings.investigationapplicqation.CircleImageView;
+import org.turings.investigationapplicqation.DialogAdapter.CustomCancellationDialog;
+import org.turings.investigationapplicqation.DialogAdapter.CustomDialogYLX;
+import org.turings.investigationapplicqation.EditionActivity;
+import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.Entity.User;
 import org.turings.investigationapplicqation.FixInfoActivity;
 import org.turings.investigationapplicqation.FixPAndMActivity;
@@ -41,6 +45,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -109,6 +115,8 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
         ly_rubbish.setOnClickListener(this);
         ly_canel.setOnClickListener(this);
         ly_fixPsd.setOnClickListener(this);
+        ly_edition.setOnClickListener(this);
+        ly_cancellation.setOnClickListener(this);
     }
 
     private void getViews() {
@@ -213,8 +221,36 @@ public class MySelfFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent4);
                 getActivity().finish();
                 break;
+            case R.id.ly_edition:
+                Intent intent5 = new Intent(getContext(), EditionActivity.class);
+                startActivity(intent5);
+                break;
+            case R.id.ly_cancellation://注销账号
+                //提示是否注销，信息将全部消失
+                showCustomDialog();
+                break;
         }
     }
+    //询问是否注销
+    private void showCustomDialog() {
+        //管理多个Fragment
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //事务（一系列原子性操作）
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        CustomCancellationDialog customDialog = new CustomCancellationDialog();
+        //是否添加过
+        if(!customDialog.isAdded()){
+            //没添加过添加
+            transaction.add(customDialog,"dialog");
+        }
+        //传入要上传的数据
+        customDialog.setMsgData(uid);
+        //显示Fragment
+        transaction.show(customDialog);
+        //提交，只有提交了上面的操作才会生效
+        transaction.commit();
+    }
+
     //去修改
     private void uploadToDataBase(String userId) {
         okHttpClient = new OkHttpClient();

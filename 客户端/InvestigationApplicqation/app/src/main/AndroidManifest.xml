@@ -22,15 +22,24 @@
     <application
         android:name="com.mob.MobApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logoylx"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppNoTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".PreAppearanceActivity"></activity>
-        <activity android:name=".QuestionBankActivity"></activity>
+        <activity android:name=".WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FunctionIntroductionActivity" />
+        <activity android:name=".EditionActivity" />
+        <activity android:name=".PreAppearanceActivity" />
+        <activity android:name=".QuestionBankActivity" />
         <activity android:name=".FixYesActivity" />
         <activity android:name=".SearchResultActivity" />
         <activity android:name=".SearchActivity" />
@@ -41,7 +50,7 @@
         <activity android:name=".SMSLoginActivity" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".ClauseActivity" />
-        <activity android:name=".StatisticalResultsActivity"></activity>
+        <activity android:name=".StatisticalResultsActivity" />
         <activity android:name=".ReleaseActivity" />
         <activity android:name=".RubbishActivity" />
         <activity android:name=".FixInfoActivity" />
@@ -56,11 +65,6 @@
             android:theme="@style/AppNoTheme" />
         <activity android:name=".CreateBlankQuestionnaire" />
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".LoginAndRegisterActivity" />
         <activity

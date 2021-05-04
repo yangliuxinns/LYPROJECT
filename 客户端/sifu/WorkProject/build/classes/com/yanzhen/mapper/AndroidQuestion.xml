@@ -7,7 +7,7 @@
                 <result property="title" column="question_title"/>
                 <result property="type" column="question_types"/>
                 <result property="isRequired" column="Is_required"/>
-                <result property="pageNumber" column="pageNumber"/>
+                <result property="PageNumber" column="pageNumber"/>
                 <collection property="options" ofType="com.yanzhen.entityylx.Options" column="uid=t1.question_id"
 		    				select="com.yanzhen.mapper.AndroidOptionsDao.findOptionsById">
             	</collection>

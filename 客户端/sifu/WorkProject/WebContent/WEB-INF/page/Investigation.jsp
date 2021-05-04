@@ -17,7 +17,7 @@
 		    if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 		        // 这里警告框会阻塞当前页面继续加载
 		        // 以下代码是用javascript强行关闭当前页面
-		        document.body.innerHTML = '请使用微信客户端打开';	
+		        document.body.innerHTML = '请使用微信客户端打开';
 		    }		   
 		 </c:if>
 </script>
@@ -144,7 +144,7 @@
 					</div>			
 			</c:if>
           </c:forEach>
-          <input name="ip" value="${ip}" type="text">
+          <input name="ip" value="${ip}" type="hidden">
           <div style="display: flex;justify-content: center;">
           		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
           </div>

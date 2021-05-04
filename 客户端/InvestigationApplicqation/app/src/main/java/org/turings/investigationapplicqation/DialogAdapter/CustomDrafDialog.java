@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.turings.investigationapplicqation.EditQuestionnaire;
+import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
@@ -118,6 +119,51 @@ public class CustomDrafDialog extends DialogFragment {
                         if(str.equals("更改成功")){
                             //去往
                             questionnaire.setRelease(false);
+                            //查看是否分页
+                            if(questionnaire.getTotalPage() != 0){
+                                if(questionnaire.getTotalPage() == 2){
+                                    Question question1 = new Question(0,0,"","分页",null,false,1);
+                                    questionnaire.getList().add(0,question1);
+                                    //尾部
+                                    int n = 0;
+                                    for(int k=0;k<questionnaire.getList().size();k++){
+                                        if(questionnaire.getList().get(k).getPageNumber() == 2){
+                                            n++;
+                                            Question question2 = new Question(0,0,"","分页",null,false,2);
+                                            questionnaire.getList().add(k,question2);
+                                            break;
+                                        }
+                                    }
+                                    if(n==0){
+                                        Question question2 = new Question(0,0,"","分页",null,false,2);
+                                        questionnaire.getList().add(question2);
+                                    }
+                                }else {
+                                    //不止一页
+                                    for(int i = 0;i<questionnaire.getTotalPage();i++){
+                                        if(i==0){
+                                            Question question1 = new Question(0,0,"","分页",null,false,1);
+                                            questionnaire.getList().add(0,question1);
+                                        }else {
+                                            //尾部
+                                            int n = 0;
+                                            for(int k=0;k<questionnaire.getList().size();k++){
+                                                if(questionnaire.getList().get(k).getPageNumber() == (i+1)){
+                                                    n++;
+                                                    Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                                    questionnaire.getList().add(k,question2);
+                                                    break;
+                                                }
+                                            }
+                                            if(n==0){
+                                                Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                                questionnaire.getList().add(question2);
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
                             getDialog().dismiss();//关闭当前的对话框
                             Intent intent = new Intent(getActivity(), EditQuestionnaire.class);
                             intent.putExtra("questionnaire_data", questionnaire);

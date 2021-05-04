@@ -217,4 +217,26 @@ public class Questionnaire implements Serializable {
     public void setImgColor(String imgColor) {
         this.imgColor = imgColor;
     }
+
+    @Override
+    public String toString() {
+        return "Questionnaire{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", instructions='" + instructions + '\'' +
+                ", IsRelease=" + IsRelease +
+                ", list=" + list.toString() +
+                ", totalPage=" + totalPage +
+                ", onlyPhone=" + onlyPhone +
+                ", onlyWeixin=" + onlyWeixin +
+                ", isRecordWeixinInfo=" + isRecordWeixinInfo +
+                ", appearance='" + appearance + '\'' +
+                ", imgColor='" + imgColor + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", isDel=" + isDel +
+                ", user_id=" + user_id +
+                ", select=" + select +
+                '}';
+    }
 }

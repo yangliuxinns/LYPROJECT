@@ -1,5 +1,6 @@
 package org.turings.investigationapplicqation.Fragment;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import org.turings.investigationapplicqation.DialogAdapter.CustomDraftsAdapter;
 import org.turings.investigationapplicqation.DialogAdapter.CustomQuestionnaireAdapter;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
 import org.turings.investigationapplicqation.R;
+import org.turings.investigationapplicqation.Util.DialogThridUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -45,6 +47,7 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 //草稿箱
 public class DraftsFragment extends Fragment {
+    private Dialog mDialog;
     private ListView listView;
     private CustomDraftsAdapter customDraftsAdapter;
     private List<Questionnaire> list;
@@ -132,6 +135,7 @@ public class DraftsFragment extends Fragment {
 //        list.add(qn8);
 //        list.add(qn9);
 //        list.add(qn10);
+        mDialog = DialogThridUtils.showWaitDialog(getContext(), "加载中...", false, true);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -205,10 +209,12 @@ public class DraftsFragment extends Fragment {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Log.i("lww", "请求失败");
+                        DialogThridUtils.closeDialog(mDialog);
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
+                        DialogThridUtils.closeDialog(mDialog);
                         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
                         Type type = new TypeToken<List<Questionnaire>>() {
                         }.getType();

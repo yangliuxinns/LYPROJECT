@@ -218,15 +218,63 @@ public class SearchResultActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), EditQuestionnaire.class);
                     List<Question> qs = new ArrayList<>();
                     for(Question qu:list.get(position).getList()){
-                        for(int i=0;i<qu.getOptions().size();i++){
-                            if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
-                                qu.getOptions().get(i).setImgcontent(null);
+                        if(qu.getOptions() != null) {
+                            for (int i = 0; i < qu.getOptions().size(); i++) {
+                                if (!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()) {
+                                    qu.getOptions().get(i).setImgcontent(null);
+                                }
                             }
+                            qs.add(qu);
                         }
-                        qs.add(qu);
                     }
                     list.get(position).setList(qs);
-                    intent.putExtra("questionnaire_data", list.get(position));
+                    //查看是否分页
+                    Questionnaire questionnaire = list.get(position);
+                    if(questionnaire.getTotalPage() != 0){
+                        if(questionnaire.getTotalPage() == 2){
+                            Question question1 = new Question(0,0,"","分页",null,false,1);
+                            questionnaire.getList().add(0,question1);
+                            //尾部
+                            int n = 0;
+                            for(int k=0;k<questionnaire.getList().size();k++){
+                                if(questionnaire.getList().get(k).getPageNumber() == 2){
+                                    n++;
+                                    Question question2 = new Question(0,0,"","分页",null,false,2);
+                                    questionnaire.getList().add(k,question2);
+                                    break;
+                                }
+                            }
+                            if(n==0){
+                                Question question2 = new Question(0,0,"","分页",null,false,2);
+                                questionnaire.getList().add(question2);
+                            }
+                        }else {
+                            //不止一页
+                            for(int i = 0;i<questionnaire.getTotalPage();i++){
+                                if(i==0){
+                                    Question question1 = new Question(0,0,"","分页",null,false,1);
+                                    questionnaire.getList().add(0,question1);
+                                }else {
+                                    //尾部
+                                    int n = 0;
+                                    for(int k=0;k<questionnaire.getList().size();k++){
+                                        if(questionnaire.getList().get(k).getPageNumber() == (i+1)){
+                                            n++;
+                                            Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                            questionnaire.getList().add(k,question2);
+                                            break;
+                                        }
+                                    }
+                                    if(n==0){
+                                        Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                        questionnaire.getList().add(question2);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    intent.putExtra("questionnaire_data", questionnaire);
                     startActivity(intent);
                 }
             }
@@ -247,7 +295,7 @@ public class SearchResultActivity extends AppCompatActivity {
                     lists.addAll(list);
                     customSearchResultListViewAdapter.notifyDataSetChanged();
                     Intent inten = new Intent(getApplicationContext(), ReleaseActivity.class);
-                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+lists.get(position).getId());
+                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+lists.get(position).getId());
                     inten.putExtra("uId",list.get(position).getId()+"");
                     startActivity(inten);
                 }
@@ -292,17 +340,12 @@ public class SearchResultActivity extends AppCompatActivity {
                 if(release){
                     //已经发布
                     Intent inten = new Intent(getApplicationContext(), ReleaseActivity.class);
-                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+list.get(position).getId());
+                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+list.get(position).getId());
                     inten.putExtra("uId",list.get(position).getId()+"");
                     startActivity(inten);
                 }else {
                     //请先发布才能分享
                     //问卷还没有发布是否发布
-                    list.get(position).setRelease(true);
-                    lists.clear();
-                    customSearchResultListViewAdapter.notifyDataSetChanged();
-                    lists.addAll(list);
-                    customSearchResultListViewAdapter.notifyDataSetChanged();
                     showPublishCustomDialog(lists.get(position));
                 }
             }

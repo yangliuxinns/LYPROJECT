@@ -33,12 +33,10 @@ public class SeeFillInTheBlanksActtivity extends AppCompatActivity {
         table.getConfig().setContentBackgroundFormat(new BaseCellBackgroundFormat<CellInfo>(){
             @Override
             public int getBackGroundColor(CellInfo cellInfo) {
-                if(cellInfo.position == 1){
-                    return ContextCompat.getColor(getBaseContext(),R.color.grey2);
-                }else if(cellInfo.position%2 ==0){
+                if(cellInfo.position%2 ==0){
                     return ContextCompat.getColor(getBaseContext(),R.color.colorMain);
                 }else {
-                    return 0;
+                    return ContextCompat.getColor(getBaseContext(),R.color.colorWhite);
                 }
             }
 

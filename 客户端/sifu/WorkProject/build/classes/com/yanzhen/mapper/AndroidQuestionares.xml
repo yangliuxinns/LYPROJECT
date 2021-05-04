@@ -47,8 +47,8 @@
 	</insert> 
 	<!--题目加入关联表  -->
 	<insert id="insertAssociation">
-    	insert into questionnaire_questuion_tb(questionnaire_id,question_id,Is_required,order_index) 
-    	values(#{qsid},#{qid},#{Is_required},#{order1}) 
+    	insert into questionnaire_questuion_tb(questionnaire_id,question_id,Is_required,order_index,pageNumber) 
+    	values(#{qsid},#{qid},#{Is_required},#{order1},#{pageNumber}) 
 	</insert> 
 
 	<!-- 根据id搜索问卷 -->
@@ -206,4 +206,36 @@
 	<select id="findIp" resultMap="resultMap">
 		select * from results_questionnaire_tb where questionnatre_id = #{id} and ip = #{remoteAddr}
 	</select>
+	<!--搜所问卷id集合通过用户id  -->
+	<select id="findQIdsByUserId" resultType="Integer">
+		select id from questionnaire_tb where user_id = #{id}
+	</select>
+	<!--搜所答卷ids  -->
+	<select id="findAIdsByQIds" resultType="Integer">
+		select id from results_questionnaire_tb where questionnatre_id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</select>
+	<!--彻底删除详细答案  -->
+	<delete id="deleteDetailResultById">
+		delete from detail_result where user_id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--彻底删除答卷  -->
+	<delete id="deleteResultById">
+		delete from results_questionnaire_tb where id in
+		<foreach collection="list" item="arr" index="no" open="("
+			separator="," close=")">
+        	#{arr}
+    	</foreach>
+	</delete>
+	<!--注销账户  -->
+	<delete id="deleteUserById">
+    	delete from user_tb where id = #{id}
+	</delete>
 </mapper>

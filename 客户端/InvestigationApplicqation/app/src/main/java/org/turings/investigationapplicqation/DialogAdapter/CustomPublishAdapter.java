@@ -90,7 +90,7 @@ public class CustomPublishAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 Intent inten = new Intent(context, ReleaseActivity.class);
-                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+list.get(listPosition).getId());
+                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+list.get(listPosition).getId());
                 inten.putExtra("uId",list.get(listPosition).getId()+"");
                 context.startActivity(inten);
             }

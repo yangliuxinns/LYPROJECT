@@ -41,7 +41,7 @@ public class AndroidService {
 						androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg(),options.getImgcontent());
 					}
 				}
-				androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder());
+				androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder(),question.getPageNumber());
 			}
 			return qsId;
 		}else {
@@ -66,7 +66,7 @@ public class AndroidService {
 							androidQuestionaresDao.insertOptions(k+1,options.getContent(),question.getId(),options.getImg(),options.getImgcontent());
 						}
 					}
-					androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder());
+					androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder(),question.getPageNumber());
 				}
 			}else {
 				System.out.println("删除失败");
@@ -281,5 +281,36 @@ public class AndroidService {
 	//搜索是否访问过
 	public Result findIp(String remoteAddr, int i) {
 		return androidQuestionaresDao.findIp(remoteAddr,i);
+	}
+
+	/**
+	 * 
+	 * @Title: cancellation
+	 * @Description: 注销账户
+	 * @param @param id
+	 * @param @return 参数
+	 * @return String 返回类型
+	 * @throws
+	 */
+	public String cancellation(int id) {
+		//删除收集的数据
+		//1、查询名下所有问卷
+		List<Integer> ids = androidQuestionaresDao.findQIdsByUserId(id);
+		//2、搜索答卷id
+		List<Integer> aIds = androidQuestionaresDao.findAIdsByQIds(ids);
+		//3、删除详细答案
+		androidQuestionaresDao.deleteDetailResultById(aIds);
+		//4、删除答卷
+		androidQuestionaresDao.deleteResultById(aIds);
+		//5、删除问卷
+		androidQuestionaresDao.deleteQuestionaireAndQuestion(ids);
+		androidQuestionaresDao.deleteQuestionaire(ids);
+		//6、删除用户
+		int n = androidQuestionaresDao.deleteUserById(id);
+		if(n>0) {
+			return "注销成功";
+		}else {
+			return "注销失败";
+		}
 	}
 }

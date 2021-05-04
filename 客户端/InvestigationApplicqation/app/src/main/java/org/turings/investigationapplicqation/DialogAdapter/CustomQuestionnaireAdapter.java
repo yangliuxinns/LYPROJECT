@@ -116,7 +116,6 @@ public class CustomQuestionnaireAdapter extends BaseAdapter {
         }
         //题干
         holder.text.setText(list.get(i).getOrder()+"."+list.get(listPosition).getTitle());
-        Log.i("www", "getView: "+list.get(listPosition).getOrder()+"."+list.get(listPosition).getTitle()+list.get(listPosition).toString());
         holder.cart_ylx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {//删除

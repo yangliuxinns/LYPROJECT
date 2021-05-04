@@ -134,6 +134,7 @@
                 android:textColorHint="@color/grey"
                 android:textSize="18sp"
                 android:focusableInTouchMode="true"
+                android:inputType="textPassword"
                 android:background="@null"/>
         </LinearLayout>
         <LinearLayout
@@ -353,6 +354,7 @@
                 android:maxLength="11"
                 android:hint="请输入密码"
                 android:textColorHint="@color/grey"
+                android:inputType="textPassword"
                 android:textSize="18sp"
                 android:background="@null"/>
         </LinearLayout>

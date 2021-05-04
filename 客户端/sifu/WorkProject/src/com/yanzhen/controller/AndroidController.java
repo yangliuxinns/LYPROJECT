@@ -66,7 +66,7 @@ public class AndroidController {
 			in = request.getInputStream();
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(in, "utf-8"));
-			String subjectJson = br.readLine();
+			String subjectJson = br.readLine();			
 			in.close();
 			br.close();
 			Questionnaire qs = gson.fromJson(subjectJson, Questionnaire.class);
@@ -277,7 +277,11 @@ public class AndroidController {
 	            }
 	        }
 			modelMap.addAttribute("questionnaire",questionnaire);
-			return "androidPreView";
+			if(questionnaire.getTotalPage() != 0) {
+				return "androidPagePreView";
+			}else {
+				return "androidPreView";
+			}
 		}else {
 			//只传递id
 			modelMap.addAttribute("questionnaire",questionnaire);
@@ -305,7 +309,11 @@ public class AndroidController {
             }
         }
 		modelMap.addAttribute("questionnaire",questionnaire);
-		return "androidPreView";
+		if(questionnaire.getTotalPage() != 0) {
+			return "androidPagePreView";
+		}else {
+			return "androidPreView";
+		}
 	}
 	//回答问卷之前
 	@GetMapping("/preInvestigation/{id}")
@@ -336,7 +344,6 @@ public class AndroidController {
 	    			now = new Date();
 	    			beginTime = questionnaire.getStartTime();
 	    			endTime = questionnaire.getEndTime();
-	    			System.out.print("当前时间"+now+"开始"+beginTime+"结束"+endTime);
 	    		} catch (Exception e) {
 	    			e.printStackTrace();
 	    		}
@@ -362,7 +369,11 @@ public class AndroidController {
 	    		        }
 	    				modelMap.addAttribute("questionnaire",questionnaire);
 	    				modelMap.addAttribute("ip",remoteAddr);
-	    				return "Investigation";
+	    				if(questionnaire.getTotalPage() != 0) {
+	    					return "pageInvestigation";
+	    				}else {
+	    					return "Investigation";
+	    				}
 	    			}else {
 	    				//只传递id
 	    				modelMap.addAttribute("questionnaire",questionnaire);
@@ -402,7 +413,11 @@ public class AndroidController {
 	    			        }
 	    					modelMap.addAttribute("questionnaire",questionnaire);
 	    					modelMap.addAttribute("ip",remoteAddr);
-	    					return "Investigation";
+	    					if(questionnaire.getTotalPage() != 0) {
+		    					return "pageInvestigation";
+		    				}else {
+		    					return "Investigation";
+		    				}
 	    				}else {
 	    					//只传递id
 	    					modelMap.addAttribute("questionnaire",questionnaire);
@@ -455,7 +470,11 @@ public class AndroidController {
 			        }
 					modelMap.addAttribute("questionnaire",questionnaire);
 					modelMap.addAttribute("ip",remoteAddr);
-					return "Investigation";
+					if(questionnaire.getTotalPage() != 0) {
+    					return "pageInvestigation";
+    				}else {
+    					return "Investigation";
+    				}
 				}else {
 					//只传递id
 					modelMap.addAttribute("questionnaire",questionnaire);
@@ -495,7 +514,11 @@ public class AndroidController {
 				        }
 						modelMap.addAttribute("questionnaire",questionnaire);
 						modelMap.addAttribute("ip",remoteAddr);
-						return "Investigation";
+						if(questionnaire.getTotalPage() != 0) {
+	    					return "pageInvestigation";
+	    				}else {
+	    					return "Investigation";
+	    				}
 					}else {
 						//只传递id
 						modelMap.addAttribute("questionnaire",questionnaire);
@@ -511,7 +534,7 @@ public class AndroidController {
 		}	
 		
 	}
-		//回答问卷
+	//回答问卷
 	@GetMapping("/investigation/{id}")
 	public String investigation(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
 		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
@@ -533,7 +556,11 @@ public class AndroidController {
         }
 		modelMap.addAttribute("questionnaire",questionnaire);
 		modelMap.addAttribute("ip",request.getParameter("ip"));
-		return "Investigation";
+		if(questionnaire.getTotalPage() != 0) {
+			return "pageInvestigation";
+		}else {
+			return "Investigation";
+		}
 	}
 	//获取图片
 	@RequestMapping(value = "/seekExperts",produces="text/json;charset=utf-8")
@@ -757,5 +784,14 @@ public class AndroidController {
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * 注销账户
+	 */
+	@RequestMapping(value = "/cancellation",produces="text/json;charset=utf-8")
+	@ResponseBody
+	public String cancellation(@RequestParam(value = "uId") int id) {
+		String str = androidService.cancellation(id);
+		return str;
 	}
 }

@@ -19,7 +19,7 @@ public interface AndroidQuestionaresDao {
 	//题目若为选择题增加选项
 	public void insertOptions(@Param("order1")int order,@Param("content1")String content,@Param("qId1")int qId,@Param("img1")String img,@Param("imgcontent")byte[] imgcontent);
 	//将题目填入关联表
-	public void insertAssociation(@Param("qsid")int qsid,@Param("qid")int qid,@Param("Is_required")Boolean Is_required,@Param("order1")int order);
+	public void insertAssociation(@Param("qsid")int qsid,@Param("qid")int qid,@Param("Is_required")Boolean Is_required,@Param("order1")int order,@Param("pageNumber")int pageNumber);
 
 	//根据id搜索问卷
 	public Questionnaire findQuestionareById(@Param("qsid")int qsid);
@@ -75,4 +75,14 @@ public interface AndroidQuestionaresDao {
 	public List<Result> findResultByQuestionaireId(@Param("id")int id);
 	//找ip
 	public Result findIp(@Param("remoteAddr")String remoteAddr,@Param("id")int i);
+	//查找问卷id
+	public List<Integer> findQIdsByUserId(int id);
+	//查询答卷id
+	public List<Integer> findAIdsByQIds(List<Integer> ids);
+	//删除详细答案
+	public int deleteDetailResultById(List<Integer> aIds);
+	//删除答卷
+	public int deleteResultById(List<Integer> aIds);
+	//注销账户
+	public int deleteUserById(int id);
 }

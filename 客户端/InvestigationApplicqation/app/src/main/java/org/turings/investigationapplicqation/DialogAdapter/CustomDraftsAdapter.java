@@ -80,7 +80,7 @@ public class CustomDraftsAdapter extends BaseAdapter {
             public void onClick(View view) {
                 //发布问卷
                 Intent inten = new Intent(context, ReleaseActivity.class);
-                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preview/"+list.get(listPosition).getId());
+                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+list.get(listPosition).getId());
                 inten.putExtra("uId",list.get(listPosition).getId()+"");
                 context.startActivity(inten);
             }
@@ -91,15 +91,63 @@ public class CustomDraftsAdapter extends BaseAdapter {
                 Intent intent = new Intent(context, EditQuestionnaire.class);
                 List<Question> qs = new ArrayList<>();
                 for(Question qu:list.get(listPosition).getList()){
-                    for(int i=0;i<qu.getOptions().size();i++){
-                        if(!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()){
-                            qu.getOptions().get(i).setImgcontent(null);
+                    if(qu.getOptions() != null) {
+                        for (int i = 0; i < qu.getOptions().size(); i++) {
+                            if (!qu.getOptions().get(i).getImg().equals("sr") || qu.getOptions().get(i).getImg().equals("") || qu.getOptions().get(i).getImg().isEmpty()) {
+                                qu.getOptions().get(i).setImgcontent(null);
+                            }
                         }
+                        qs.add(qu);
                     }
-                    qs.add(qu);
                 }
                 list.get(listPosition).setList(qs);
-                intent.putExtra("questionnaire_data", list.get(listPosition));
+                //查看是否分页
+                Questionnaire questionnaire = list.get(listPosition);
+                if(questionnaire.getTotalPage() != 0){
+                    if(questionnaire.getTotalPage() == 2){
+                        Question question1 = new Question(0,0,"","分页",null,false,1);
+                        questionnaire.getList().add(0,question1);
+                        //尾部
+                        int n = 0;
+                        for(int k=0;k<questionnaire.getList().size();k++){
+                            if(questionnaire.getList().get(k).getPageNumber() == 2){
+                                n++;
+                                Question question2 = new Question(0,0,"","分页",null,false,2);
+                                questionnaire.getList().add(k,question2);
+                                break;
+                            }
+                        }
+                        if(n==0){
+                            Question question2 = new Question(0,0,"","分页",null,false,2);
+                            questionnaire.getList().add(question2);
+                        }
+                    }else {
+                        //不止一页
+                        for(int i = 0;i<questionnaire.getTotalPage();i++){
+                            if(i==0){
+                                Question question1 = new Question(0,0,"","分页",null,false,1);
+                                questionnaire.getList().add(0,question1);
+                            }else {
+                                //尾部
+                                int n = 0;
+                                for(int k=0;k<questionnaire.getList().size();k++){
+                                    if(questionnaire.getList().get(k).getPageNumber() == (i+1)){
+                                        n++;
+                                        Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                        questionnaire.getList().add(k,question2);
+                                        break;
+                                    }
+                                }
+                                if(n==0){
+                                    Question question2 = new Question(0,0,"","分页",null,false,i+1);
+                                    questionnaire.getList().add(question2);
+                                }
+                            }
+                        }
+                    }
+
+                }
+                intent.putExtra("questionnaire_data",questionnaire);
                 context.startActivity(intent);
             }
         });

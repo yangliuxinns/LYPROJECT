@@ -3,6 +3,7 @@ package org.turings.investigationapplicqation;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ public class CreateBlankQuestionnaire extends AppCompatActivity implements View.
     private EditText etTitle;//问卷名称
     private EditText etInstruction;//问卷说明
     private Button btnAdd;//创建问卷
+    private int uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,8 @@ public class CreateBlankQuestionnaire extends AppCompatActivity implements View.
 
     //获取控件
     private void getViews() {
+        SharedPreferences sharedPreferences= getSharedPreferences("userInfo",MODE_PRIVATE);
+        uid= Integer.parseInt(sharedPreferences.getString("uId",""));
         back = findViewById(R.id.back);
         etTitle = findViewById(R.id.et_title);
         etInstruction = findViewById(R.id.et_content);
@@ -60,9 +64,9 @@ public class CreateBlankQuestionnaire extends AppCompatActivity implements View.
                 }else {
                     Questionnaire questionnaire;
                     if(etInstruction.getText().toString().trim().isEmpty() ||null == etInstruction.getText().toString().trim() || " ".equals(etInstruction.getText().toString().trim())){
-                        questionnaire = new Questionnaire(0, etTitle.getText().toString().trim(), getString(R.string.welcome), false,null,0,false,false,false,null,1,false);
+                        questionnaire = new Questionnaire(0, etTitle.getText().toString().trim(), getString(R.string.welcome), false,null,0,false,false,false,null,uid,false);
                     }else {
-                        questionnaire = new Questionnaire(0, etTitle.getText().toString().trim(), etInstruction.getText().toString().trim(), false,null,0,false,false,false,null,1,false);
+                        questionnaire = new Questionnaire(0, etTitle.getText().toString().trim(), etInstruction.getText().toString().trim(), false,null,0,false,false,false,null,uid,false);
                     }
                     Intent intent = new Intent(this, EditQuestionnaire.class);
                     intent.putExtra("questionnaire_data", questionnaire);

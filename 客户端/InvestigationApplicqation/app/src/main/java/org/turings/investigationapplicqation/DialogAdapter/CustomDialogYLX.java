@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import org.turings.investigationapplicqation.Entity.Options;
 import org.turings.investigationapplicqation.Entity.Question;
 import org.turings.investigationapplicqation.Entity.Questionnaire;
+import org.turings.investigationapplicqation.Entity.Result;
 import org.turings.investigationapplicqation.Fragment.DraftsFragment;
 import org.turings.investigationapplicqation.MainActivity;
 import org.turings.investigationapplicqation.R;
@@ -29,6 +32,7 @@ import org.turings.investigationapplicqation.R;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +51,6 @@ public class CustomDialogYLX extends DialogFragment {
     private OkHttpClient okHttpClient;
     private Response response;//响应
     private Questionnaire questionnaire;//问卷
-
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,12 +63,22 @@ public class CustomDialogYLX extends DialogFragment {
                 //关闭activity对象
                 //将信息存入数据库，并跳转到添加错题页
                 for(Question qu:questionnaire.getList()){
-                    for(int i=0;i<qu.getOptions().size();i++){
-                        if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
-                            String dataFileStr = getActivity().getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
-                            Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
-                            qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                    if(qu.getOptions() != null){
+                        for(int i=0;i<qu.getOptions().size();i++){
+                            if(!qu.getOptions().get(i).getImg().equals("sr") && !qu.getOptions().get(i).getImg().isEmpty()){
+                                String dataFileStr = getActivity().getFilesDir().getAbsolutePath() + "/" + qu.getOptions().get(i).getImg();
+                                Bitmap bitmap = BitmapFactory.decodeFile(dataFileStr);
+                                qu.getOptions().get(i).setImgcontent(bitmap2Bytes(compressImage(bitmap)));
+                            }
                         }
+                    }
+                }
+                //保存之前删除分页
+                Iterator<Question> iterator = questionnaire.getList().iterator();
+                while (iterator.hasNext()) {
+                    Question value = iterator.next();
+                    if (value.getType().equals("分页")) {
+                        iterator.remove();
                     }
                 }
                 new Thread(new Runnable() {
