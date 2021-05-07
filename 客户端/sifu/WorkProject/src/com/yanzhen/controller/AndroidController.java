@@ -70,6 +70,7 @@ public class AndroidController {
 			in.close();
 			br.close();
 			Questionnaire qs = gson.fromJson(subjectJson, Questionnaire.class);
+			System.out.println("传过来的id"+qs.getId());
 			id = androidService.addQuestionares(qs);
 		
 		} catch (IOException e) {
@@ -258,7 +259,9 @@ public class AndroidController {
 	//预览问卷之前
 	@GetMapping("/prepreview/{id}")
 	public String prePreViewQuestionares(@PathVariable("id") Integer id,ModelMap modelMap,HttpServletRequest request) {
+		System.out.println("问卷"+id);
 		Questionnaire questionnaire = androidService.findQuestionnaireById(id);
+		System.out.println("问卷"+questionnaire.toString());
 		if(questionnaire.getAppearance() == null || questionnaire.getAppearance().equals("")) {
 			for(Question qu:questionnaire.getList()){
 	            for(int i=0;i<qu.getOptions().size();i++){
@@ -327,6 +330,7 @@ public class AndroidController {
                 remoteAddr = request.getRemoteAddr();
             }
         }
+        System.out.println("ip:"+remoteAddr);
         //搜索
 		//问卷先看设置
 		if(questionnaire.getOnlyPhone()) {

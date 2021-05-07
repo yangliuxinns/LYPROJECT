@@ -80,7 +80,7 @@ public class CustomDraftsAdapter extends BaseAdapter {
             public void onClick(View view) {
                 //发布问卷
                 Intent inten = new Intent(context, ReleaseActivity.class);
-                inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+list.get(listPosition).getId());
+                inten.putExtra("url","http://192.168.137.1:8080/WorkProject/ylx/preInvestigation/"+list.get(listPosition).getId());
                 inten.putExtra("uId",list.get(listPosition).getId()+"");
                 context.startActivity(inten);
             }

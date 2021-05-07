@@ -295,7 +295,7 @@ public class SearchResultActivity extends AppCompatActivity {
                     lists.addAll(list);
                     customSearchResultListViewAdapter.notifyDataSetChanged();
                     Intent inten = new Intent(getApplicationContext(), ReleaseActivity.class);
-                    inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+lists.get(position).getId());
+                    inten.putExtra("url","http://192.168.137.1:8080/WorkProject/ylx/preInvestigation/"+lists.get(position).getId());
                     inten.putExtra("uId",list.get(position).getId()+"");
                     startActivity(inten);
                 }

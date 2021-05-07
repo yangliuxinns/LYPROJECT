@@ -13,7 +13,7 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=xWfzGbIe2LFNjHNtjmsCBsB56UExdabO"></script>
 </head>
 <body>
-<div style="display: flex;justify-content: center;">
+<div style="display: flex;justify-content: center;overflow: auto">
 <div style="width: 100%;padding-top: 5%;font-size: 18px;margin-left: 5%;margin-right: 5%">
 	<!--标题  -->
 	<h3 style="margin-bottom: 2%;text-align:center;color:${questionnaire.imgColor};">${questionnaire.title}</h3>
@@ -48,7 +48,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -74,7 +74,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -119,9 +119,9 @@
 			</c:if>
 			<c:if test="${question.type == '地图' }">
 					<input type="text" id="${question.order}" name="${question.order}" style="width:80%;height: 50px;margin: 8px 0;">
-					<button type="button" value="点击获取地理位置" style="width:100px; height: 30px;margin: 8px 2px;" onclick="auto(&quot;ip${question.order}&quot;,&quot;container${question.order}&quot;,&quot;btn${question.order}&quot;,&quot;tx${question.order}&quot;,&quot;div${question.order}&quot;)">点击获取位置</button>
+					<button type="button" value="点击获取地理位置" style="width:100px; height: 30px;margin: 8px 2px;" onclick="auto(&quot;ip${question.order}&quot;,&quot;container${question.order}&quot;,&quot;btn${question.order}&quot;,&quot;tx${question.order}&quot;,&quot;divs${question.order}&quot;)">点击获取位置</button>
 					<br/>	
-					<div id="div${question.order}" style="display: none;border: 1px solid #F5F5F5;border-radius: 4px">
+					<div id="divs${question.order}" style="display: none;height:200px;border: 1px solid #F5F5F5;border-radius: 4px">
 						<div style="margin:10px">
 						请输入:<input type="text" id="ip${question.order}" size="30" value="地点" style="width:300px;" />
 						 	<button id="btn${question.order}" style="width:100px; height: 20px;margin: 10px 2px;">搜索</button>
@@ -134,7 +134,7 @@
 					</div>			
 			</c:if>
           </c:forEach>
-          <div style="display: flex;justify-content: center;">
+          <div style="display: flex;text-align:center;justify-content: center;margin-bottom: 15px;">
           		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
           </div>
 	</form>

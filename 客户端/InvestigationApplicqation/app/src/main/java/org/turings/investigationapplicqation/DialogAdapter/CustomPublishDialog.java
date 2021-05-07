@@ -60,7 +60,7 @@ public class CustomPublishDialog extends DialogFragment {
                     }else {
                         //发布问卷
                         Intent inten = new Intent(getActivity(), ReleaseActivity.class);
-                        inten.putExtra("url","http://192.168.10.223:8080/WorkProject/ylx/preInvestigation/"+questionnaire.getId());
+                        inten.putExtra("url","http://192.168.137.1:8080/WorkProject/ylx/preInvestigation/"+questionnaire.getId());
                         inten.putExtra("uId",questionnaire.getId()+"");
                         startActivity(inten);
                         getActivity().finish();

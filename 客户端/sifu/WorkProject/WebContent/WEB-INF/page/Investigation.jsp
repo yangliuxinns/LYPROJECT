@@ -58,7 +58,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -84,7 +84,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -145,7 +145,7 @@
 			</c:if>
           </c:forEach>
           <input name="ip" value="${ip}" type="hidden">
-          <div style="display: flex;justify-content: center;">
+          <div style="display: flex;text-align:center;justify-content: center;margin-bottom: 15px;">
           		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
           </div>
 	</form>
@@ -619,7 +619,7 @@
 		</c:forEach>
 		var ui =document.getElementById('form1');
 		if(flag == 0){
-			ui.action = "http://192.168.10.223:8080/WorkProject/ylx/saveInfo/${questionnaire.id}";
+			ui.action = "http://192.168.137.1:8080/WorkProject/ylx/saveInfo/${questionnaire.id}";
 			ui.submit();
 		} 
 	} 

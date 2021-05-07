@@ -365,12 +365,9 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        uploadToDataBase(questionnaire);
+                        uploadToDataBase1(questionnaire);
                     }
                 }).start();
-                Intent intent3 = new Intent(this, PreViewActivity.class);
-                intent3.putExtra("q_data", questionnaire);
-                startActivity(intent3);
                 break;
         }
     }
@@ -399,6 +396,38 @@ public class EditQuestionnaire extends AppCompatActivity implements View.OnClick
                     public void onResponse(Call call, Response response) throws IOException {
                         String str = response.body().string();
                         questionnaire.setId(Integer.parseInt(str));
+                    }
+                });
+            }
+        }).start();
+    }
+    //访问服务器上传至数据库保存
+    private void uploadToDataBase1(Questionnaire subjectMsg) {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+        String subject = gson.toJson(subjectMsg);
+        okHttpClient = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain;charset=utf-8"),subject);
+        String url = "http://"+getResources().getString(R.string.ipConfig)+":8080/WorkProject/ylx/saveQuestionares";
+//
+        Request request = new Request.Builder().post(requestBody).url(url).build();
+        final Call call = okHttpClient.newCall(request);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //异步请求
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("lww", "请求失败");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String str = response.body().string();
+                        questionnaire.setId(Integer.parseInt(str));
+                        Intent intent3 = new Intent(getApplicationContext(), PreViewActivity.class);
+                        intent3.putExtra("q_data", questionnaire);
+                        startActivity(intent3);
                     }
                 });
             }

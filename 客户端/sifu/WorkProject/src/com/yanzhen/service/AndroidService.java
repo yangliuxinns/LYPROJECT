@@ -43,7 +43,8 @@ public class AndroidService {
 				}
 				androidQuestionaresDao.insertAssociation(questionnaire.getId(), question.getId(),question.getRequired(),question.getOrder(),question.getPageNumber());
 			}
-			return qsId;
+			System.out.println("返回的问卷id"+qsId);
+			return questionnaire.getId();
 		}else {
 			System.out.println("应该先更新");
 			//更新

@@ -68,7 +68,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -80,11 +80,11 @@
 				<c:forEach items="${question.options}" var="option" varStatus="statusoption">
 					<c:if test="${option.img == 'sr'}">
 						<span style="border: 1px solid #F5F5F5;display: block;margin-bottom: -20px; padding:4px 10px;border-radius: 4px">
-							<input type="checkbox" name="option${question.order}" value="${option.content }" onclick="t3(&quot;demo${statusoption.count}&quot;,&quot;de${statusoption.count}&quot;)">${option.content }
+							<input type="checkbox" name="option${question.order}" value="${option.content }" onclick="t3(&quot;demoo${statusoption.count}&quot;,&quot;deo${statusoption.count}&quot;)">${option.content }
 						</span>
 						<br/>
-						<span id = "de${statusoption.count}" style="border: 1px solid #F5F5F5;display: none;margin-bottom: 0px; padding:4px 10px;border-radius: 4px">
-							<input type="text" value="" class = "aa${question.order}" id="demo${statusoption.count}" name="demo${statusoption.count}" style="width:100%;height:25px;display: none;border:none;">
+						<span id = "deo${statusoption.count}" style="border: 1px solid #F5F5F5;display: none;margin-bottom: 0px; padding:4px 10px;border-radius: 4px">
+							<input type="text" value="" class = "aa${question.order}" id="demoo${statusoption.count}" name="demo${statusoption.count}" style="width:100%;height:25px;display: none;border:none;">
 						</span>
 					</c:if>
 					<c:if test="${option.img != 'sr'}">
@@ -94,7 +94,7 @@
 						<br/>
 						<c:if test="${option.imgcontent != null}">
 							<div style="border: 1px solid #F5F5F5;border-radius: 4px;width: 50px;height: 50px">
-								<img src="http://192.168.10.223:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
+								<img src="http://192.168.137.1:8080/WorkProject/ylx/seekExperts?id=${option.id }&pId=${questionnaire.id}" style="width: 50px;height: 50px">
 							</div>
 						<br>
 						</c:if>
@@ -139,9 +139,9 @@
 			</c:if>
 			<c:if test="${question.type == '地图' }">
 					<input type="text" id="${question.order}" name="${question.order}" style="width:80%;height: 50px;margin: 8px 0;">
-					<button type="button" value="点击获取地理位置" style="width:100px; height: 30px;margin: 8px 2px;" onclick="auto(&quot;ip${question.order}&quot;,&quot;container${question.order}&quot;,&quot;btn${question.order}&quot;,&quot;tx${question.order}&quot;,&quot;div${question.order}&quot;)">点击获取位置</button>
+					<button type="button" value="点击获取地理位置" style="width:100px; height: 30px;margin: 8px 2px;" onclick="auto(&quot;ip${question.order}&quot;,&quot;container${question.order}&quot;,&quot;btn${question.order}&quot;,&quot;tx${question.order}&quot;,&quot;divs${question.order}&quot;)">点击获取位置</button>
 					<br/>	
-					<div id="div${question.order}" style="display: none;border: 1px solid #F5F5F5;border-radius: 4px">
+					<div id="divs${question.order}" style="display: none;border: 1px solid #F5F5F5;border-radius: 4px">
 						<div style="margin:10px">
 						请输入:<input type="text" id="ip${question.order}" size="30" value="地点" style="width:300px;" />
 						 	<button id="btn${question.order}" style="width:100px; height: 20px;margin: 10px 2px;">搜索</button>
@@ -149,7 +149,7 @@
 						<div id="container${question.order}" style="width: 100%;height: 200px"></div>
 						<div style="margin:10px">
 						您的地址：<input type="text" id="tx${question.order}" style="width:300px;">
-							<button type="button" id="ok${question.order}" style="width:100px; height: 20px;margin: 8px 2px;" onClick="ok(&quot;div${question.order}&quot;,&quot;ok${question.order}&quot;,&quot;${question.order}&quot;,&quot;tx${question.order}&quot;)">确定</button>
+							<button type="button" id="ok${question.order}" style="width:100px; height: 20px;margin: 8px 2px;" onClick="ok(&quot;divs${question.order}&quot;,&quot;ok${question.order}&quot;,&quot;${question.order}&quot;,&quot;tx${question.order}&quot;)">确定</button>
 						</div>
 					</div>			
 			</c:if>
@@ -157,7 +157,7 @@
           </c:forEach>
           <input name="ip" value="${ip}" type="hidden">
           <input id = 'nm' value="1" type="hidden">
-          <div style="display: flex;justify-content: center;">
+          <div style="display: flex;text-align:center;justify-content: center;margin-bottom: 15px;">
           		<input class="jquery_button" type="button" name="btnTop" id="btnTop" value="上一页" style="display:none; width: 100%;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px;margin-right:2px" onclick="cha()"/>                    
           		<input class="jquery_button" type="button" name="btnNext" id="btnNext" value="下一页" style="width: 100%;display: flex;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="che()"/>                    
           		<input class="jquery_button" type="button" name="btnSave" id="btnSave" value="提交" style="display:none;width: 100%;justify-content: center;height:50px;margin-top: 50px;background-color:${questionnaire.imgColor};color: #fff;font-size: 22px;border:0px solid red;border-radius: 4px" onclick="check()"/>                    
@@ -850,7 +850,7 @@
 		</c:forEach>
 		var ui =document.getElementById('form1');
 		if(flag == 0){
-			ui.action = "http://192.168.10.223:8080/WorkProject/ylx/saveInfo/${questionnaire.id}";
+			ui.action = "http://192.168.137.1:8080/WorkProject/ylx/saveInfo/${questionnaire.id}";
 			ui.submit();
 		} 
 		
